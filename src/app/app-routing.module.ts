@@ -43,10 +43,26 @@ import { AppComponent } from './app.component';
                         loadChildren: () => import('./users/users.module').then((m) => m.UsersModule),
                         canActivate: [AppRouteGuard],
                     },
+                    {
+                        path: 'oportunidades',
+                        loadChildren: () =>
+                            import('./oportunidades/oportunidades.module').then(
+                                (m) => m.OportunidadesModule
+                            ),
+                        canActivate: [AppRouteGuard],
+                    },
+                    {
+                        path: 'clientes',
+                        loadChildren: () =>
+                            import('./clientes/clientes.module').then(
+                                (m) => m.ClientesModule
+                            ),
+                        canActivate: [AppRouteGuard],
+                    },
                 ],
             },
         ]),
     ],
     exports: [RouterModule],
 })
-export class AppRoutingModule {}
+export class AppRoutingModule { }

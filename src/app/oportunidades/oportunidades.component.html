@@ -1,0 +1,250 @@
+<div [@routerTransition] class="oportunidades-page" [class.arrastando]="arrastando">
+    <!-- HEADER -->
+    <section class="content-header">
+        <div class="container-fluid">
+            <div class="page-header-row">
+
+                <div>
+                    <h1>CRM - Funil de Vendas</h1>
+                    <p>
+                        Acompanhe suas oportunidades e movimente elas pelo funil.
+                    </p>
+                </div>
+
+                <div class="header-actions">
+
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+
+                        <input type="text" [(ngModel)]="keyword" placeholder="Buscar oportunidades..."
+                            (keyup.enter)="pesquisar()" />
+
+                        @if (keyword) {
+                        <button type="button" class="clear-search" (click)="limparPesquisa()">
+                            <i class="fas fa-times"></i>
+                        </button>
+                        }
+                    </div>
+
+                    <button type="button" class="btn btn-nova" (click)="novaOportunidade()">
+
+                        <i class="fas fa-plus"></i>
+                        Nova Oportunidade
+                    </button>
+
+                    <button type="button" class="btn btn-filtros" title="Gerenciar estágios"
+                        (click)="gerenciarStatus()">
+
+                        <i class="fas fa-sliders-h"></i>
+                    </button>
+
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- CONTEÚDO -->
+    <section class="content px-2 pb-3">
+        <div class="container-fluid">
+
+            <!-- FILTROS -->
+            <div class="filtros-row">
+
+                <div class="filtro-info">
+                    <span>Funil de vendas</span>
+                </div>
+
+                <div class="agrupar-box">
+                    <span>Agrupar por:</span>
+
+                    <strong>Nenhum</strong>
+
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+
+            </div>
+
+
+            <!-- CARREGANDO -->
+            @if (carregando) {
+
+            <div class="loading-container">
+                <i class="fas fa-spinner fa-spin"></i>
+                <span>Carregando oportunidades...</span>
+            </div>
+
+            } @else {
+
+            <!-- KANBAN -->
+            <div class="kanban-wrapper">
+
+                <div class="kanban" cdkDropListGroup>
+
+                    @for (coluna of kanban; track coluna.statusId) {
+
+                    <div class="kanban-column">
+
+                        <!-- CABEÇALHO DA COLUNA -->
+                        <div class="column-header" [style.border-top-color]="coluna.cor || '#1b3157'">
+
+                            <div class="column-title-row">
+
+                                <div class="column-title">
+                                    {{ coluna.statusNome }}
+                                    <span>
+                                        ({{ coluna.quantidade }})
+                                    </span>
+                                </div>
+
+                            </div>
+
+                            <div class="column-value">
+                                {{ getValorColuna(coluna) | currency:'BRL':'symbol':'1.0-0':'pt-BR' }}
+                            </div>
+
+                        </div>
+
+
+                        <!-- CARDS -->
+                        <div class="column-body" cdkDropList [cdkDropListData]="coluna.oportunidades"
+                            (cdkDropListDropped)="moverOportunidade($event, coluna)">
+
+                            @for (
+                            oportunidade of coluna.oportunidades;
+                            track oportunidade.id
+                            ) {
+
+                            <div class="opportunity-card" cdkDrag [cdkDragData]="oportunidade"
+                                (cdkDragStarted)="arrastando = true" (cdkDragEnded)="arrastando = false"
+                                (click)="abrirOportunidade(oportunidade.id)">
+
+                                <div class="card-main">
+
+                                    <div class="company-avatar">
+                                        {{ (oportunidade.clienteNome || 'C').substring(0, 2).toUpperCase() }}
+                                    </div>
+
+                                    <div class="company-info">
+
+                                        <div class="company-name">
+                                            {{ oportunidade.clienteNome }}
+                                        </div>
+
+                                        <div class="opportunity-title">
+                                            {{ oportunidade.titulo }}
+                                        </div>
+
+                                    </div>
+
+                                    <div class="probability-dot"
+                                        [ngClass]="getProbabilidadeClass(oportunidade.probabilidade)">
+                                    </div>
+
+                                </div>
+
+
+                                <div class="card-footer">
+
+                                    <div class="seller">
+
+                                        <i class="far fa-user"></i>
+
+                                        <span>
+                                            {{ oportunidade.vendedorNome || 'Sem vendedor' }}
+                                        </span>
+
+                                    </div>
+
+                                    <strong class="opportunity-value">
+                                        {{
+                                        oportunidade.valorEstimado
+                                        | currency:'BRL':'symbol':'1.0-0':'pt-BR'
+                                        }}
+                                    </strong>
+
+                                </div>
+
+                            </div>
+
+                            }
+
+
+                            @if (!coluna.oportunidades || coluna.oportunidades.length === 0) {
+
+                            <div class="empty-column">
+                                <i class="fas fa-inbox"></i>
+                                <span>Nenhuma oportunidade</span>
+                            </div>
+
+                            }
+
+
+                            <!-- VER MAIS -->
+                            @if (coluna.quantidade > (coluna.oportunidades?.length || 0)) {
+                            <button type="button" class="ver-mais">
+
+                                + Ver mais
+
+                            </button>
+
+                            }
+
+                        </div>
+
+                    </div>
+
+                    }
+
+                </div>
+
+            </div>
+
+
+            <!-- RODAPÉ -->
+            <div class="kanban-summary">
+
+                <div class="legend">
+
+                    <div class="legend-item">
+                        <span class="legend-dot alta"></span>
+                        Alta probabilidade
+                    </div>
+
+                    <div class="legend-item">
+                        <span class="legend-dot media"></span>
+                        Média probabilidade
+                    </div>
+
+                    <div class="legend-item">
+                        <span class="legend-dot baixa"></span>
+                        Baixa probabilidade
+                    </div>
+
+                </div>
+
+
+                <div class="summary-values">
+
+                    <div>
+                        Total de oportunidades:
+                        <strong>{{ totalOportunidades }}</strong>
+                    </div>
+
+                    <div>
+                        Valor total:
+                        <strong class="total-value">
+                            {{ valorTotal | currency:'BRL':'symbol':'1.0-0':'pt-BR' }}
+                        </strong>
+                    </div>
+
+                </div>
+
+            </div>
+
+            }
+
+        </div>
+    </section>
+
+</div>

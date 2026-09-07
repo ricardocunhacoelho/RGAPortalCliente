@@ -1,0 +1,684 @@
+.oportunidades-page {
+    background: #f5f7fa;
+    min-height: calc(100vh - 60px);
+}
+
+/* ==============================
+   HEADER
+   ============================== */
+
+.content-header {
+    padding: 22px 0 10px;
+}
+
+.page-header-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+}
+
+.page-header-row h1 {
+    margin: 0;
+    font-size: 29px;
+    font-weight: 700;
+    color: #101828;
+}
+
+.page-header-row p {
+    margin: 7px 0 0;
+    color: #667085;
+    font-size: 15px;
+}
+
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+
+/* ==============================
+   BUSCA
+   ============================== */
+
+.search-box {
+    width: 270px;
+    height: 43px;
+    background: #fff;
+    border: 1px solid #d9dee7;
+    border-radius: 7px;
+
+    display: flex;
+    align-items: center;
+
+    padding: 0 12px;
+}
+
+.search-box i {
+    color: #667085;
+    font-size: 14px;
+}
+
+.search-box input {
+    border: 0;
+    outline: none;
+    width: 100%;
+    padding: 0 9px;
+
+    font-size: 13px;
+    color: #344054;
+}
+
+.search-box input::placeholder {
+    color: #98a2b3;
+}
+
+.clear-search {
+    border: 0;
+    background: transparent;
+    color: #98a2b3;
+}
+
+
+/* ==============================
+   BOTÕES
+   ============================== */
+
+.btn-nova {
+    height: 43px;
+    background: #08285c;
+    border: 1px solid #08285c;
+    color: #fff;
+
+    padding: 0 18px;
+    border-radius: 7px;
+
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.btn-nova:hover {
+    background: #0b3474;
+    color: #fff;
+}
+
+.btn-nova i {
+    margin-right: 7px;
+}
+
+.btn-filtros {
+    width: 43px;
+    height: 43px;
+
+    background: #fff;
+    border: 1px solid #d9dee7;
+    color: #344054;
+
+    border-radius: 7px;
+}
+
+.btn-filtros:hover {
+    background: #f8fafc;
+}
+
+
+/* ==============================
+   FILTROS
+   ============================== */
+
+.filtros-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    margin-bottom: 15px;
+}
+
+.filtro-info {
+    color: #667085;
+    font-size: 13px;
+}
+
+.agrupar-box {
+    height: 42px;
+
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    padding: 0 14px;
+
+    background: #fff;
+    border: 1px solid #d9dee7;
+    border-radius: 7px;
+
+    font-size: 13px;
+    color: #667085;
+}
+
+.agrupar-box strong {
+    color: #101828;
+    font-weight: 600;
+}
+
+.agrupar-box i {
+    margin-left: 10px;
+    font-size: 11px;
+    color: #667085;
+}
+
+
+/* ==============================
+   KANBAN
+   ============================== */
+
+.kanban-wrapper {
+    overflow-x: auto;
+    padding-bottom: 8px;
+}
+
+.kanban {
+    display: flex;
+    gap: 15px;
+
+    min-width: max-content;
+}
+
+.kanban-column {
+    width: 285px;
+    min-width: 285px;
+
+    background: #f8fafc;
+
+    border: 1px solid #e4e7ec;
+    border-radius: 10px;
+
+    overflow: hidden;
+}
+
+
+/* ==============================
+   CABEÇALHO COLUNA
+   ============================== */
+
+.column-header {
+    background: #fff;
+
+    padding: 16px 16px 13px;
+
+    border-top: 4px solid #1b3157;
+    border-bottom: 1px solid #e4e7ec;
+}
+
+.column-title-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.column-title {
+    color: #101828;
+
+    font-size: 14px;
+    font-weight: 700;
+
+    text-transform: uppercase;
+}
+
+.column-title span {
+    color: #667085;
+    font-weight: 500;
+}
+
+.column-value {
+    margin-top: 7px;
+
+    color: #087443;
+
+    font-size: 15px;
+    font-weight: 700;
+}
+
+
+/* ==============================
+   CORPO COLUNA
+   ============================== */
+
+.column-body {
+    padding: 10px;
+
+    min-height: 430px;
+
+    background: #f8fafc;
+}
+
+
+/* ==============================
+   CARD
+   ============================== */
+
+.opportunity-card {
+    background: #fff;
+
+    border: 1px solid #e4e7ec;
+    border-radius: 9px;
+
+    padding: 14px;
+
+    margin-bottom: 9px;
+
+    cursor: grab;
+
+    transition:
+        transform .15s ease,
+        box-shadow .15s ease,
+        border-color .15s ease;
+}
+
+.opportunity-card:hover {
+    transform: translateY(-1px);
+
+    border-color: #cbd5e1;
+
+    box-shadow: 0 4px 12px rgba(16, 24, 40, .08);
+}
+
+
+/* ==============================
+   EMPRESA
+   ============================== */
+
+.card-main {
+    display: flex;
+    align-items: flex-start;
+    gap: 9px;
+}
+
+.company-avatar {
+    width: 35px;
+    height: 35px;
+
+    min-width: 35px;
+
+    border-radius: 50%;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: #e8f0ff;
+    color: #1d4ed8;
+
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.company-info {
+    min-width: 0;
+    flex: 1;
+}
+
+.company-name {
+    color: #101828;
+
+    font-size: 13px;
+    font-weight: 700;
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.opportunity-title {
+    margin-top: 4px;
+
+    color: #667085;
+
+    font-size: 11px;
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+
+/* ==============================
+   PROBABILIDADE
+   ============================== */
+
+.probability-dot {
+    width: 9px;
+    height: 9px;
+
+    min-width: 9px;
+
+    border-radius: 50%;
+
+    margin-top: 4px;
+}
+
+.probabilidade-alta {
+    background: #16a34a;
+}
+
+.probabilidade-media {
+    background: #f59e0b;
+}
+
+.probabilidade-baixa {
+    background: #dc2626;
+}
+
+
+/* ==============================
+   FOOTER CARD
+   ============================== */
+
+.card-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    margin-top: 20px;
+}
+
+.seller {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+
+    min-width: 0;
+
+    color: #667085;
+
+    font-size: 11px;
+}
+
+.seller i {
+    color: #667085;
+}
+
+.seller span {
+    max-width: 105px;
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.opportunity-value {
+    color: #101828;
+    font-size: 12px;
+    white-space: nowrap;
+}
+
+
+/* ==============================
+   VAZIO
+   ============================== */
+
+.empty-column {
+    min-height: 120px;
+
+    display: flex;
+    flex-direction: column;
+
+    align-items: center;
+    justify-content: center;
+
+    color: #98a2b3;
+
+    font-size: 12px;
+}
+
+.empty-column i {
+    font-size: 20px;
+    margin-bottom: 8px;
+}
+
+
+/* ==============================
+   VER MAIS
+   ============================== */
+
+.ver-mais {
+    width: 100%;
+
+    border: 0;
+    border-top: 1px solid #e4e7ec;
+
+    background: transparent;
+
+    padding: 13px 0;
+
+    color: #344054;
+
+    font-size: 12px;
+    font-weight: 600;
+
+    cursor: pointer;
+}
+
+.ver-mais:hover {
+    color: #08285c;
+}
+
+
+/* ==============================
+   RESUMO
+   ============================== */
+
+.kanban-summary {
+    margin-top: 18px;
+
+    background: #fff;
+
+    border: 1px solid #e4e7ec;
+    border-radius: 9px;
+
+    min-height: 60px;
+
+    padding: 0 20px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 20px;
+}
+
+
+/* ==============================
+   LEGENDA
+   ============================== */
+
+.legend {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    color: #475467;
+
+    font-size: 12px;
+}
+
+.legend-dot {
+    width: 10px;
+    height: 10px;
+
+    border-radius: 50%;
+}
+
+.legend-dot.alta {
+    background: #16a34a;
+}
+
+.legend-dot.media {
+    background: #f59e0b;
+}
+
+.legend-dot.baixa {
+    background: #dc2626;
+}
+
+
+/* ==============================
+   TOTAIS
+   ============================== */
+
+.summary-values {
+    display: flex;
+    align-items: center;
+    gap: 30px;
+
+    color: #667085;
+
+    font-size: 12px;
+}
+
+.summary-values strong {
+    margin-left: 5px;
+
+    color: #101828;
+}
+
+.summary-values .total-value {
+    color: #1554c0;
+    font-size: 14px;
+}
+
+
+/* ==============================
+   LOADING
+   ============================== */
+
+.loading-container {
+    min-height: 450px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+
+    color: #667085;
+}
+
+.loading-container i {
+    color: #08285c;
+}
+
+
+/* ==============================
+   RESPONSIVO
+   ============================== */
+
+@media (max-width: 900px) {
+
+    .page-header-row {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .header-actions {
+        width: 100%;
+    }
+
+    .search-box {
+        flex: 1;
+    }
+
+    .kanban-summary {
+        align-items: flex-start;
+        flex-direction: column;
+        padding: 15px;
+    }
+
+    .summary-values {
+        width: 100%;
+        justify-content: space-between;
+    }
+}
+
+
+/* ==============================
+   DRAG & DROP
+   ============================== */
+
+/* Cursor dos cards */
+.opportunity-card {
+    cursor: grab;
+}
+
+.opportunity-card:active {
+    cursor: grabbing;
+}
+
+
+/* Card que está sendo arrastado */
+.cdk-drag-preview {
+    box-sizing: border-box;
+
+    background: #fff;
+
+    border: 1px solid #d0d5dd;
+    border-radius: 9px;
+
+    padding: 14px;
+
+    box-shadow: 0 12px 24px rgba(16, 24, 40, .18);
+
+    opacity: .95;
+
+    width: 263px;
+
+    cursor: grabbing;
+}
+
+
+/* Espaço onde o card estava */
+.cdk-drag-placeholder {
+    opacity: 0;
+}
+
+
+/* Animação ao movimentar os cards */
+.cdk-drag-animating {
+    transition: transform 200ms ease;
+}
+
+
+/* Coluna que está recebendo o card */
+.column-body.cdk-drop-list-receiving {
+    background: #eef4ff;
+
+    border-radius: 8px;
+
+    transition:
+        background-color .2s ease;
+}
+
+
+/* Enquanto o usuário está arrastando */
+.column-body.cdk-drop-list-dragging {
+    transition: background-color .2s ease;
+}
+
+
+/* Animação dos outros cards */
+.column-body.cdk-drop-list-dragging .opportunity-card:not(.cdk-drag-placeholder) {
+
+    transition: transform 200ms ease;
+}
+
+/* Cursor durante o arraste */
+.oportunidades-page.arrastando,
+.oportunidades-page.arrastando * {
+    cursor: grabbing !important;
+}

@@ -1,0 +1,269 @@
+<div class="modal-header">
+    <h5 class="modal-title">
+        Estágios do funil
+    </h5>
+
+    <button
+        type="button"
+        class="close"
+        aria-label="Close"
+        (click)="fechar()">
+
+        <span aria-hidden="true">&times;</span>
+
+    </button>
+</div>
+
+<div class="modal-body">
+
+    <div *ngIf="!criando && !editando">
+
+        <div class="d-flex justify-content-between align-items-center mb-3">
+
+            <div>
+                <h6 class="mb-0">
+                    Estágios de negociação
+                </h6>
+
+                <small class="text-muted">
+                    Defina as etapas utilizadas no funil de vendas.
+                </small>
+            </div>
+
+            <button
+                type="button"
+                class="btn btn-primary"
+                (click)="novo()">
+
+                <i class="fa fa-plus mr-1"></i>
+
+                Novo estágio
+
+            </button>
+
+        </div>
+
+        <div
+            *ngIf="status.length === 0"
+            class="text-center text-muted py-4">
+
+            Nenhum estágio cadastrado.
+
+        </div>
+
+        <div
+            *ngFor="let item of status"
+            class="border rounded p-3 mb-2">
+
+            <div class="d-flex align-items-center">
+
+                <div
+                    class="mr-3"
+                    style="width: 14px; height: 14px; border-radius: 50%;"
+                    [style.background-color]="item.cor || '#2563eb'">
+                </div>
+
+                <div class="flex-grow-1">
+
+                    <strong>
+                        {{ item.ordem }}. {{ item.nome }}
+                    </strong>
+
+                    <div class="small text-muted">
+
+                        <span *ngIf="item.ganho">
+                            Ganho
+                        </span>
+
+                        <span *ngIf="item.perdido">
+                            Perdido
+                        </span>
+
+                        <span *ngIf="!item.ganho && !item.perdido">
+                            Em andamento
+                        </span>
+
+                    </div>
+
+                </div>
+
+                <div class="mr-3">
+
+                    <span
+                        class="badge"
+                        [ngClass]="item.ativo ? 'badge-success' : 'badge-secondary'">
+
+                        {{ item.ativo ? 'Ativo' : 'Inativo' }}
+
+                    </span>
+
+                </div>
+
+                <button
+                    type="button"
+                    class="btn btn-sm btn-outline-secondary mr-1"
+                    (click)="editar(item)">
+
+                    <i class="fa fa-edit"></i>
+
+                </button>
+
+                <button
+                    type="button"
+                    class="btn btn-sm btn-outline-danger"
+                    (click)="excluir(item)">
+
+                    <i class="fa fa-trash"></i>
+
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- FORMULÁRIO -->
+
+    <div *ngIf="criando || editando">
+
+        <div class="form-group">
+
+            <label>
+                Nome
+            </label>
+
+            <input
+                type="text"
+                class="form-control"
+                [(ngModel)]="nome"
+                placeholder="Ex.: Qualificação" />
+
+        </div>
+
+
+        <div class="form-group">
+
+            <label>
+                Cor
+            </label>
+
+            <div class="d-flex align-items-center">
+
+                <input
+                    type="color"
+                    class="mr-2"
+                    [(ngModel)]="cor"
+                    style="width: 55px; height: 38px;" />
+
+                <input
+                    type="text"
+                    class="form-control"
+                    [(ngModel)]="cor" />
+
+            </div>
+
+        </div>
+
+
+        <div class="custom-control custom-checkbox mb-2">
+
+            <input
+                type="checkbox"
+                class="custom-control-input"
+                id="statusAtivo"
+                [(ngModel)]="ativo" />
+
+            <label
+                class="custom-control-label"
+                for="statusAtivo">
+
+                Estágio ativo
+
+            </label>
+
+        </div>
+
+
+        <div class="custom-control custom-checkbox mb-2">
+
+            <input
+                type="checkbox"
+                class="custom-control-input"
+                id="statusGanho"
+                [(ngModel)]="ganho" />
+
+            <label
+                class="custom-control-label"
+                for="statusGanho">
+
+                Este é um estágio de negócio ganho
+
+            </label>
+
+        </div>
+
+
+        <div class="custom-control custom-checkbox mb-3">
+
+            <input
+                type="checkbox"
+                class="custom-control-input"
+                id="statusPerdido"
+                [(ngModel)]="perdido" />
+
+            <label
+                class="custom-control-label"
+                for="statusPerdido">
+
+                Este é um estágio de negócio perdido
+
+            </label>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<div class="modal-footer">
+
+    <ng-container *ngIf="criando || editando">
+
+        <button
+            type="button"
+            class="btn btn-secondary"
+            [disabled]="salvando"
+            (click)="cancelarEdicao()">
+
+            Cancelar
+
+        </button>
+
+        <button
+            type="button"
+            class="btn btn-primary"
+            [disabled]="salvando"
+            (click)="salvar()">
+
+            <i class="fa fa-save mr-1"></i>
+
+            {{ salvando ? 'Salvando...' : 'Salvar' }}
+
+        </button>
+
+    </ng-container>
+
+    <button
+        *ngIf="!criando && !editando"
+        type="button"
+        class="btn btn-secondary"
+        (click)="fechar()">
+
+        Fechar
+
+    </button>
+
+</div>

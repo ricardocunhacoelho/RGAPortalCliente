@@ -1,0 +1,143 @@
+<div class="modal-header">
+
+    <h5 class="modal-title">
+        Novo cliente
+    </h5>
+
+    <button
+        type="button"
+        class="close"
+        aria-label="Close"
+        [disabled]="salvando"
+        (click)="fechar()">
+
+        <span aria-hidden="true">
+            &times;
+        </span>
+
+    </button>
+
+</div>
+
+
+<div class="modal-body">
+
+    <div class="form-group">
+
+        <label>
+            Empresa
+        </label>
+
+        <input
+            type="text"
+            class="form-control"
+            [(ngModel)]="empresa"
+            placeholder="Ex.: Mineração Vitória Ltda." />
+
+    </div>
+
+
+    <div class="form-group">
+
+        <label>
+            Nome do contato
+        </label>
+
+        <input
+            type="text"
+            class="form-control"
+            [(ngModel)]="nome"
+            placeholder="Ex.: Carlos Silva" />
+
+    </div>
+
+
+    <div class="row">
+
+        <div class="col-md-6">
+
+            <div class="form-group">
+
+                <label>
+                    Telefone
+                </label>
+
+                <input
+                    type="text"
+                    class="form-control"
+                    [(ngModel)]="telefone"
+                    placeholder="(28) 99999-9999" />
+
+            </div>
+
+        </div>
+
+
+        <div class="col-md-6">
+
+            <div class="form-group">
+
+                <label>
+                    E-mail
+                </label>
+
+                <input
+                    type="email"
+                    class="form-control"
+                    [(ngModel)]="email"
+                    placeholder="contato@empresa.com" />
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="form-group">
+
+        <label>
+            Observações
+        </label>
+
+        <textarea
+            class="form-control"
+            rows="4"
+            [(ngModel)]="observacoes"
+            placeholder="Informações adicionais sobre o cliente...">
+        </textarea>
+
+    </div>
+
+</div>
+
+
+<div class="modal-footer">
+
+    <button
+        type="button"
+        class="btn btn-secondary"
+        [disabled]="salvando"
+        (click)="fechar()">
+
+        Cancelar
+
+    </button>
+
+
+    <button
+        type="button"
+        class="btn btn-primary"
+        [disabled]="salvando"
+        (click)="salvar()">
+
+        <i
+            class="fa fa-save mr-1"
+            *ngIf="!salvando">
+        </i>
+
+        {{ salvando ? 'Salvando...' : 'Salvar cliente' }}
+
+    </button>
+
+</div>

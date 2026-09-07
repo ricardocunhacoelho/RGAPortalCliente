@@ -1,0 +1,172 @@
+<div class="modal-header">
+    <h4 class="modal-title">
+        {{ tituloModal }}
+    </h4>
+
+    <button type="button" class="close" aria-label="Close" [disabled]="salvando" (click)="cancelar()">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+
+<div class="modal-body">
+
+    <div *ngIf="carregando" class="text-center py-5">
+        <div class="spinner-border text-primary mb-3"></div>
+        <div class="text-muted">
+            Carregando dados...
+        </div>
+    </div>
+
+    <form *ngIf="!carregando" #form="ngForm">
+
+        <!-- Cliente -->
+        <div class="form-group mb-3">
+            <label>
+                Cliente <span class="text-danger">*</span>
+            </label>
+
+            <select class="form-control" name="clienteId" [(ngModel)]="clienteId" required>
+
+                <option [ngValue]="undefined">
+                    Selecione o cliente
+                </option>
+
+                <option *ngFor="let cliente of clientes" [ngValue]="cliente.id">
+                    {{ cliente.nome }}
+                </option>
+            </select>
+        </div>
+
+        <!-- Título -->
+        <div class="form-group mb-3">
+            <label>
+                Título da oportunidade
+                <span class="text-danger">*</span>
+            </label>
+
+            <input type="text" class="form-control" name="titulo" [(ngModel)]="titulo"
+                placeholder="Ex.: Perfuratriz para poços artesianos" maxlength="200" required />
+        </div>
+
+        <!-- Vendedor + Estágio -->
+        <div class="row">
+
+            <div class="col-md-6">
+                <div class="form-group mb-3">
+                    <label>
+                        Vendedor responsável
+                    </label>
+
+                    <select class="form-control" name="vendedorId" [(ngModel)]="vendedorId">
+
+                        <option [ngValue]="undefined">
+                            Sem vendedor
+                        </option>
+
+                        <option *ngFor="let vendedor of vendedores" [ngValue]="vendedor.id">
+                            {{ vendedor.nome }}
+                        </option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="form-group mb-3">
+                    <label>
+                        Estágio
+                        <span class="text-danger">*</span>
+                    </label>
+
+                    <select class="form-control" name="statusNegociacaoId" [(ngModel)]="statusNegociacaoId" required>
+
+                        <option [ngValue]="undefined">
+                            Selecione o estágio
+                        </option>
+
+                        <option *ngFor="let status of statusNegociacoes" [ngValue]="status.id">
+                            {{ status.nome }}
+                        </option>
+                    </select>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Valor + Probabilidade -->
+        <div class="row">
+
+            <div class="col-md-6">
+                <div class="form-group mb-3">
+                    <label>
+                        Valor estimado
+                    </label>
+
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">R$</span>
+                        </div>
+
+                        <input type="number" class="form-control" name="valorEstimado" [(ngModel)]="valorEstimado"
+                            min="0" step="0.01" placeholder="0,00" />
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="form-group mb-3">
+                    <label>
+                        Probabilidade de fechamento
+                    </label>
+
+                    <div class="input-group">
+                        <input type="number" class="form-control" name="probabilidade" [(ngModel)]="probabilidade"
+                            min="0" max="100" step="1" placeholder="Ex.: 70" />
+
+                        <div class="input-group-append">
+                            <span class="input-group-text">%</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Previsão -->
+        <div class="form-group mb-3">
+            <label>
+                Previsão de fechamento
+            </label>
+
+            <input type="date" class="form-control" name="previsaoFechamento" [(ngModel)]="previsaoFechamento" />
+        </div>
+
+        <!-- Descrição -->
+        <div class="form-group mb-0">
+            <label>
+                Descrição
+            </label>
+
+            <textarea class="form-control" name="descricao" [(ngModel)]="descricao" rows="4" maxlength="2000"
+                placeholder="Informações adicionais sobre a oportunidade...">
+            </textarea>
+        </div>
+
+    </form>
+
+</div>
+
+<div class="modal-footer">
+
+    <button type="button" class="btn btn-secondary" [disabled]="salvando" (click)="cancelar()">
+        Cancelar
+    </button>
+
+    <button type="button" class="btn btn-primary" [disabled]="carregando || salvando" (click)="salvar()">
+
+        <span *ngIf="salvando" class="spinner-border spinner-border-sm mr-1">
+        </span>
+
+        {{ salvando ? 'Salvando...' : textoBotaoSalvar }}
+    </button>
+
+</div>

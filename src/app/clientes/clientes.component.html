@@ -1,0 +1,230 @@
+<div [@routerTransition]>
+
+    <section class="content-header">
+
+        <div class="container-fluid">
+
+            <div class="row align-items-center">
+
+                <div class="col-md-6">
+
+                    <h1 class="mb-1">
+                        Clientes
+                    </h1>
+
+                    <div class="text-muted">
+                        Empresas e contatos relacionados às oportunidades comerciais.
+                    </div>
+
+                </div>
+
+                <div class="col-md-6 text-right">
+
+                    <button
+                        type="button"
+                        class="btn bg-blue"
+                        (click)="novoCliente()">
+
+                        <i class="fa fa-plus mr-1"></i>
+
+                        Novo cliente
+
+                    </button>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <section class="content px-2 pb-3">
+
+        <div class="container-fluid">
+
+            <div class="card">
+
+                <div class="card-body">
+
+
+                    <!-- PESQUISA -->
+
+                    <div class="row mb-4">
+
+                        <div class="col-md-5">
+
+                            <div class="input-group">
+
+                                <input
+                                    type="text"
+                                    class="form-control"
+                                    placeholder="Buscar clientes..."
+                                    [(ngModel)]="keyword"
+                                    (keyup.enter)="pesquisar()" />
+
+                                <div class="input-group-append">
+
+                                    <button
+                                        type="button"
+                                        class="btn btn-primary"
+                                        (click)="pesquisar()">
+
+                                        <i class="fa fa-search"></i>
+
+                                    </button>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- CARREGANDO -->
+
+                    <div
+                        *ngIf="carregando"
+                        class="text-center py-5">
+
+                        <i class="fa fa-spinner fa-spin mr-2"></i>
+
+                        Carregando clientes...
+
+                    </div>
+
+
+                    <!-- LISTA -->
+
+                    <div
+                        *ngIf="!carregando"
+                        class="table-responsive">
+
+                        <table class="table table-hover">
+
+                            <thead>
+
+                                <tr>
+
+                                    <th>
+                                        Cliente
+                                    </th>
+
+                                    <th>
+                                        Telefone
+                                    </th>
+
+                                    <th>
+                                        E-mail
+                                    </th>
+
+                                    <th
+                                        class="text-right"
+                                        style="width: 130px;">
+
+                                        Ações
+
+                                    </th>
+
+                                </tr>
+
+                            </thead>
+
+
+                            <tbody>
+
+                                <tr
+                                    *ngFor="let cliente of clientes">
+
+                                    <td>
+
+                                        <div class="font-weight-bold">
+
+                                            {{ cliente.empresa || cliente.nome }}
+
+                                        </div>
+
+                                        <div
+                                            *ngIf="cliente.empresa && cliente.nome"
+                                            class="small text-muted">
+
+                                            {{ cliente.nome }}
+
+                                        </div>
+
+                                    </td>
+
+
+                                    <td>
+
+                                        {{ cliente.telefone || '-' }}
+
+                                    </td>
+
+
+                                    <td>
+
+                                        {{ cliente.email || '-' }}
+
+                                    </td>
+
+
+                                    <td class="text-right">
+
+                                        <button
+                                            type="button"
+                                            class="btn btn-sm btn-outline-secondary mr-1"
+                                            (click)="editarCliente(cliente)">
+
+                                            <i class="fa fa-edit"></i>
+
+                                        </button>
+
+                                        <button
+                                            type="button"
+                                            class="btn btn-sm btn-outline-danger"
+                                            (click)="excluir(cliente)">
+
+                                            <i class="fa fa-trash"></i>
+
+                                        </button>
+
+                                    </td>
+
+                                </tr>
+
+
+                                <tr *ngIf="clientes.length === 0">
+
+                                    <td
+                                        colspan="4"
+                                        class="text-center text-muted py-5">
+
+                                        <i class="fa fa-users fa-2x mb-3"></i>
+
+                                        <div>
+                                            Nenhum cliente encontrado.
+                                        </div>
+
+                                    </td>
+
+                                </tr>
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+</div>
