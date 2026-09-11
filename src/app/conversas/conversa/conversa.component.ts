@@ -274,8 +274,12 @@ export class ConversaComponent
             return;
         }
 
-        const numeroCarregamento =
-            ++this.numeroCarregamentoConversa;
+        const conversaIdAtual = this.conversaId;
+
+        this.numeroCarregamentoConversa++;
+
+        const carregamentoAtual =
+            this.numeroCarregamentoConversa;
 
         this.carregando = true;
         this.carregandoMensagens = true;
@@ -283,63 +287,101 @@ export class ConversaComponent
         this.erroAnaliseIA = false;
         this.analiseIA = null;
 
-        // Sempre começa limpa ao trocar de conversa
         this.mensagens = [];
+        this.skipCount = 0;
+        this.temMaisMensagens = true;
 
         try {
 
-            // ========================================================
+            // ============================================================
             // 1. CARREGA A CONVERSA
-            // ========================================================
+            // ============================================================
 
             const conversa =
-                await this._conversasService
-                    .get(this.conversaId)
-                    .toPromise();
+                await firstValueFrom(
+                    this._conversasService.get(
+                        conversaIdAtual
+                    )
+                );
 
-            // Se o usuário já trocou de conversa enquanto carregava,
-            // ignora o resultado antigo.
-            if (
-                numeroCarregamento !==
-                this.numeroCarregamentoConversa
-            ) {
-                return;
-            }
+            this.conversa =
+                conversa || null;
 
-            this.conversa = conversa ?? null;
+            this.atualizarStatusJanela();
 
-            // ========================================================
+
+            // ============================================================
             // 2. CARREGA AS MENSAGENS
-            // ========================================================
+            // ============================================================
 
-            await this.carregarMensagens(true);
+            const mensagens =
+                await firstValueFrom(
+                    this._mensagensService.getByConversa(
+                        conversaIdAtual
+                    )
+                );
 
 
-            // ========================================================
-            // 3. SE NÃO TEM MENSAGENS, NÃO ANALISA A IA
-            // ========================================================
+            // ============================================================
+            // 3. NENHUMA MENSAGEM
+            // ============================================================
 
             if (
-                !this.mensagens ||
-                this.mensagens.length === 0
+                !mensagens ||
+                mensagens.length === 0
             ) {
+
+                this.mensagens = [];
+
+                this.carregandoMensagens = false;
+                this.carregando = false;
+
+                this.temMaisMensagens = false;
 
                 this.analiseIA = null;
                 this.erroAnaliseIA = false;
                 this.carregandoAnaliseIA = false;
 
+                this.cd.detectChanges();
+
                 return;
             }
 
 
-            // ========================================================
-            // 4. SÓ ANALISA SE EXISTIR HISTÓRICO
-            // ========================================================
+            // ============================================================
+            // 4. POSSUI MENSAGENS
+            // ============================================================
 
-            await this.analisarConversaIA(
-                this.conversaId,
-                numeroCarregamento
-            );
+            this.mensagens = mensagens;
+
+            this.skipCount = mensagens.length;
+
+            this.temMaisMensagens = false;
+
+            this.carregandoMensagens = false;
+            this.carregando = false;
+
+
+            // ============================================================
+            // 5. ANALISA SOMENTE SE EXISTIREM MENSAGENS
+            // ============================================================
+
+            if (
+                this.conversaId === conversaIdAtual &&
+                carregamentoAtual ===
+                this.numeroCarregamentoConversa
+            ) {
+
+                this.analisarConversaIA(
+                    conversaIdAtual,
+                    carregamentoAtual
+                );
+            }
+
+
+            this.cd.detectChanges();
+
+            this.scrollParaFinal();
 
         }
         catch (error) {
@@ -349,17 +391,15 @@ export class ConversaComponent
                 error
             );
 
-            // Importante:
-            // não transforma ausência de mensagens em erro.
-            this.mensagens =
-                this.mensagens || [];
-
-        }
-        finally {
-
-            this.carregando = false;
             this.carregandoMensagens = false;
+            this.carregando = false;
+            this.carregandoAnaliseIA = false;
 
+            this.mensagens = [];
+
+            this.analiseIA = null;
+
+            this.cd.detectChanges();
         }
     }
 
