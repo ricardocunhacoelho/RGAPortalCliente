@@ -17,7 +17,7 @@ import { FormsModule } from '@angular/forms';
 import { Subscription } from 'rxjs';
 
 import { AppComponentBase } from '@shared/app-component-base';
-
+import { firstValueFrom } from 'rxjs';
 import {
     WhatsAppSignalRService
 } from '@shared/services/whatsapp-signalr.service';
@@ -268,119 +268,100 @@ export class ConversaComponent
 
     }
 
-    carregarConversa(): void {
+    private async carregarConversa(): Promise<void> {
 
         if (!this.conversaId) {
             return;
         }
 
-
-        const conversaIdAtual =
-            this.conversaId;
-
-        const carregamentoAtual =
+        const numeroCarregamento =
             ++this.numeroCarregamentoConversa;
 
-        this.conversa = null;
+        this.carregando = true;
+        this.carregandoMensagens = true;
 
+        this.erroAnaliseIA = false;
+        this.analiseIA = null;
+
+        // Sempre começa limpa ao trocar de conversa
         this.mensagens = [];
 
-        this.mensagem = '';
+        try {
 
-        this.skipCount = 0;
+            // ========================================================
+            // 1. CARREGA A CONVERSA
+            // ========================================================
 
-        this.totalMensagens = 0;
+            const conversa =
+                await this._conversasService
+                    .get(this.conversaId)
+                    .toPromise();
 
-        this.temMaisMensagens = true;
+            // Se o usuário já trocou de conversa enquanto carregava,
+            // ignora o resultado antigo.
+            if (
+                numeroCarregamento !==
+                this.numeroCarregamentoConversa
+            ) {
+                return;
+            }
 
-        this.janelaExpirada = false;
+            this.conversa = conversa ?? null;
 
-        this.textoJanela = '';
+            // ========================================================
+            // 2. CARREGA AS MENSAGENS
+            // ========================================================
 
-        this.carregando = true;
-
-        this.carregandoMensagens = false;
-
-        this.carregandoMaisMensagens = false;
-
-        abp.ui.setBusy();
-
-        this.busyCarregamentoConversa = true;
-
-
-        this._conversasService
-            .get(conversaIdAtual)
-            .subscribe({
-
-                next: (result) => {
-
-                    if (
-                        this.conversaId !== conversaIdAtual ||
-                        carregamentoAtual !==
-                        this.numeroCarregamentoConversa
-                    ) {
-
-                        return;
-                    }
-
-                    this.conversa = result;
-
-                    this.atualizarStatusJanela();
-
-                    this.carregando = false;
-
-                    this.carregarMensagens(true);
-
-                    this.marcarMensagensComoLidas(
-                        conversaIdAtual,
-                        carregamentoAtual
-                    );
-
-                    this.analisarConversaIA(
-                        conversaIdAtual,
-                        carregamentoAtual
-                    );
-
-                    this.cd.detectChanges();
-                },
+            await this.carregarMensagens(true);
 
 
-                error: () => {
+            // ========================================================
+            // 3. SE NÃO TEM MENSAGENS, NÃO ANALISA A IA
+            // ========================================================
 
-                    if (
-                        this.conversaId !== conversaIdAtual ||
-                        carregamentoAtual !==
-                        this.numeroCarregamentoConversa
-                    ) {
+            if (
+                !this.mensagens ||
+                this.mensagens.length === 0
+            ) {
 
-                        return;
-                    }
+                this.analiseIA = null;
+                this.erroAnaliseIA = false;
+                this.carregandoAnaliseIA = false;
 
-
-                    this.carregando = false;
-
-                    if (
-                        this.busyCarregamentoConversa
-                    ) {
-
-                        abp.ui.clearBusy();
-
-                        this.busyCarregamentoConversa =
-                            false;
-                    }
+                return;
+            }
 
 
-                    this.notify.error(
-                        'Não foi possível carregar a conversa.'
-                    );
+            // ========================================================
+            // 4. SÓ ANALISA SE EXISTIR HISTÓRICO
+            // ========================================================
 
+            await this.analisarConversaIA(
+                this.conversaId,
+                numeroCarregamento
+            );
 
-                    this.cd.detectChanges();
-                }
+        }
+        catch (error) {
 
-            });
+            console.error(
+                'Erro ao carregar conversa:',
+                error
+            );
+
+            // Importante:
+            // não transforma ausência de mensagens em erro.
+            this.mensagens =
+                this.mensagens || [];
+
+        }
+        finally {
+
+            this.carregando = false;
+            this.carregandoMensagens = false;
+
+        }
     }
-
 
     atualizarStatusJanela(): void {
 
@@ -439,241 +420,139 @@ export class ConversaComponent
 
 
 
-    carregarMensagens(
+    private async carregarMensagens(
         reset: boolean = false
-    ): void {
+    ): Promise<void> {
 
         if (!this.conversaId) {
-
-            if (
-                this.busyCarregamentoConversa
-            ) {
-
-                abp.ui.clearBusy();
-
-                this.busyCarregamentoConversa =
-                    false;
-            }
-
             return;
-        }
-
-
-        const conversaIdAtual =
-            this.conversaId;
-
-        let alturaAnterior = 0;
-
-        let scrollTopAnterior = 0;
-
-
-        if (
-            !reset &&
-            this.mensagensContainer
-        ) {
-
-            const elemento =
-                this.mensagensContainer.nativeElement;
-
-
-            alturaAnterior =
-                elemento.scrollHeight;
-
-
-            scrollTopAnterior =
-                elemento.scrollTop;
         }
 
         if (reset) {
 
-            this.skipCount = 0;
-
-            this.temMaisMensagens = true;
-
             this.mensagens = [];
+            this.skipCount = 0;
+            this.carregandoMaisMensagens = false;
+
         }
 
+        this.carregandoMensagens = true;
 
-        if (!this.temMaisMensagens) {
+        try {
+
+            const resultado =
+                await firstValueFrom(
+                    this._mensagensService.getAll(
+                        this.conversaId,
+                        undefined,
+                        undefined,
+                        undefined,
+                        this.skipCount,
+                        this.pageSize
+                    )
+                );
+
+
+            // ========================================================
+            // SEM MENSAGENS = NORMAL
+            // ========================================================
 
             if (
-                this.busyCarregamentoConversa
+                !resultado ||
+                !resultado.items ||
+                resultado.items.length === 0
             ) {
 
-                abp.ui.clearBusy();
+                if (reset) {
+                    this.mensagens = [];
+                }
 
-                this.busyCarregamentoConversa =
-                    false;
+                return;
             }
 
-            return;
+
+            // ========================================================
+            // ADICIONA AS MENSAGENS
+            // ========================================================
+
+            if (reset) {
+
+                this.mensagens =
+                    resultado.items;
+
+            }
+            else {
+
+                this.mensagens = [
+                    ...resultado.items,
+                    ...this.mensagens
+                ];
+
+            }
+
+
+            this.skipCount +=
+                resultado.items.length;
+
+
         }
+        catch (error) {
 
+            console.error(
+                'Erro ao carregar mensagens:',
+                error
+            );
 
-        if (
-            this.carregandoMensagens ||
-            this.carregandoMaisMensagens
-        ) {
-            return;
+            // Não quebra a tela.
+            // Uma conversa pode simplesmente não ter mensagens.
+            if (reset) {
+                this.mensagens = [];
+            }
+
         }
+        finally {
 
+            this.carregandoMensagens = false;
+            this.carregandoMaisMensagens = false;
 
-        if (
-            this.skipCount === 0
-        ) {
-
-            this.carregandoMensagens = true;
-
-        } else {
-
-            this.carregandoMaisMensagens = true;
         }
+    }
 
+    marcarMensagensComoLidas(
+        conversaId: string,
+        carregamentoAtual: number
+    ): void {
 
-        this._mensagensService
-            .getAll(
-                conversaIdAtual,
-                undefined,
-                undefined,
-                undefined,
-                this.skipCount,
-                this.pageSize
-            )
+        this._conversasService
+            .marcarComoVisualizadas(conversaId)
             .subscribe({
 
-                next: (result) => {
+                next: () => {
 
+                    // Evita atualizar uma conversa
+                    // que já foi trocada.
                     if (
-                        this.conversaId !==
-                        conversaIdAtual
+                        this.conversaId !== conversaId ||
+                        carregamentoAtual !==
+                        this.numeroCarregamentoConversa
                     ) {
-
                         return;
                     }
 
-
-                    const novasMensagens =
-                        result.items || [];
-
-
-                    this.totalMensagens =
-                        result.totalCount || 0;
-
-                    this.mensagens = [
-                        ...novasMensagens.reverse(),
-                        ...this.mensagens
-                    ];
-
-
-                    this.skipCount +=
-                        novasMensagens.length;
-
-
-                    this.temMaisMensagens =
-                        this.mensagens.length <
-                        this.totalMensagens;
-
-
-                    this.carregandoMensagens =
-                        false;
-
-                    this.carregandoMaisMensagens =
-                        false;
-
-
                     this.cd.detectChanges();
-
-
-
-                    if (reset) {
-
-                        this.scrollParaFinal();
-
-                    } else {
-
-                        this.restaurarScroll(
-                            alturaAnterior,
-                            scrollTopAnterior
-                        );
-                    }
-
-                    if (
-                        this.busyCarregamentoConversa
-                    ) {
-
-                        abp.ui.clearBusy();
-
-                        this.busyCarregamentoConversa =
-                            false;
-                    }
                 },
 
+                error: (erro) => {
 
-                error: () => {
-
-                    this.carregandoMensagens =
-                        false;
-
-                    this.carregandoMaisMensagens =
-                        false;
-
-                    if (
-                        this.busyCarregamentoConversa
-                    ) {
-
-                        abp.ui.clearBusy();
-
-                        this.busyCarregamentoConversa =
-                            false;
-                    }
-
-
-                    this.notify.error(
-                        'Não foi possível carregar as mensagens.'
+                    console.error(
+                        '[WhatsApp] Erro ao marcar mensagens como lidas:',
+                        erro
                     );
 
-
-                    this.cd.detectChanges();
                 }
 
             });
     }
-
-    marcarMensagensComoLidas(
-    conversaId: string,
-    carregamentoAtual: number
-): void {
-
-    this._conversasService
-        .marcarComoVisualizadas(conversaId)
-        .subscribe({
-
-            next: () => {
-
-                // Evita atualizar uma conversa
-                // que já foi trocada.
-                if (
-                    this.conversaId !== conversaId ||
-                    carregamentoAtual !==
-                        this.numeroCarregamentoConversa
-                ) {
-                    return;
-                }
-
-                this.cd.detectChanges();
-            },
-
-            error: (erro) => {
-
-                console.error(
-                    '[WhatsApp] Erro ao marcar mensagens como lidas:',
-                    erro
-                );
-
-            }
-
-        });
-}
 
 
     scrollParaFinal(): void {
