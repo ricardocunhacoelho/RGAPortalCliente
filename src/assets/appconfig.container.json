@@ -1,6 +1,6 @@
 {
     "remoteServiceBaseUrl": "http://localhost:44311",
-    "appBaseUrl": "http://localhost:4200",
+    "appBaseUrl": "https://rgaportalclientepage.pages.dev/",
     "localeMappings": [
         {
             "from": "pt-BR",

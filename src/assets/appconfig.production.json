@@ -1,6 +1,6 @@
 {
     "remoteServiceBaseUrl": "https://api-rga.grksistemas.com.br",
-    "appBaseUrl": "http://localhost:4200",
+    "appBaseUrl": "https://rgaportalclientepage.pages.dev/",
     "localeMappings": [
         {
             "from": "pt-BR",
