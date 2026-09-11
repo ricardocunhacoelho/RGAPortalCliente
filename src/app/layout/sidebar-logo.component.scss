@@ -1,0 +1,49 @@
+.brand-link {
+    height: 110px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 12px 15px;
+
+    text-decoration: none;
+
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+
+    overflow: hidden;
+
+    transition: background 0.2s ease;
+}
+
+.brand-logo {
+    width: 175px;
+    height: auto;
+
+    max-height: 90px;
+
+    object-fit: contain;
+
+    display: block;
+}
+
+/* Hover */
+.brand-link:hover {
+    background: rgba(255, 255, 255, 0.04);
+}
+
+
+/* ============================================================
+   SIDEBAR RECOLHIDA
+   ============================================================ */
+
+body.sidebar-collapse .brand-link {
+    height: 70px;
+
+    padding: 8px;
+}
+
+body.sidebar-collapse .brand-logo {
+    width: 45px;
+    max-height: 50px;
+}
