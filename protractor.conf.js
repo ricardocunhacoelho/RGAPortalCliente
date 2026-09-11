@@ -11,7 +11,7 @@ exports.config = {
         browserName: 'chrome',
     },
     directConnect: true,
-    baseUrl: 'https://rgaportalclientepage.pages.dev//',
+    baseUrl: 'https://rgaportalclientepage.pages.dev/',
     framework: 'jasmine',
     jasmineNodeOpts: {
         showColors: true,
