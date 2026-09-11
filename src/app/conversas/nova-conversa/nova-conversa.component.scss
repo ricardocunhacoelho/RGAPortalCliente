@@ -1,0 +1,337 @@
+.nova-conversa {
+    height: 100%;
+
+    display: flex;
+    flex-direction: column;
+
+    background: #fff;
+}
+
+.nova-conversa-header {
+    padding: 18px 22px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    border-bottom: 1px solid #e4e6ef;
+}
+
+.nova-conversa-header h3 {
+    margin: 0;
+
+    font-size: 18px;
+    font-weight: 600;
+
+    color: #3f4254;
+}
+
+.nova-conversa-header p {
+    margin: 4px 0 0;
+
+    font-size: 13px;
+
+    color: #7e8299;
+}
+
+.nova-conversa-body {
+    padding: 25px;
+
+    max-width: 650px;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    font-weight: 500;
+
+    color: #3f4254;
+}
+
+.new-client-option {
+    padding: 15px;
+
+    margin-top: 10px;
+
+    border: 1px solid #e4e6ef;
+    border-radius: 6px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    font-size: 13px;
+
+    color: #7e8299;
+}
+
+.new-client-option button {
+    padding: 0;
+}
+
+.form-actions {
+    margin-top: 25px;
+
+    display: flex;
+    justify-content: flex-end;
+
+    gap: 10px;
+}
+
+.back-link {
+    margin-bottom: 20px;
+}
+
+.alert {
+    font-size: 13px;
+}
+
+.cliente-pesquisa {
+    border: 1px solid #e4e6ef;
+
+    border-radius: 6px;
+
+    background: #fff;
+
+    overflow: hidden;
+}
+
+
+.cliente-pesquisa-input {
+    position: relative;
+
+    display: flex;
+
+    align-items: center;
+}
+
+
+.cliente-pesquisa-input i {
+    position: absolute;
+
+    left: 13px;
+
+    color: #a1a5b7;
+
+    z-index: 2;
+}
+
+
+.cliente-pesquisa-input input {
+    padding-left: 38px;
+
+    border: none;
+
+    border-radius: 0;
+
+    height: 44px;
+
+    box-shadow: none;
+}
+
+
+.cliente-pesquisa-input input:focus {
+    box-shadow: none;
+
+    border: none;
+}
+
+
+.cliente-lista {
+    max-height: 280px;
+
+    overflow-y: auto;
+
+    border-top: 1px solid #e4e6ef;
+}
+
+
+.cliente-item {
+    width: 100%;
+
+    border: none;
+
+    border-bottom: 1px solid #f0f1f3;
+
+    background: #fff;
+
+    padding: 10px 12px;
+
+    display: flex;
+
+    align-items: center;
+
+    text-align: left;
+
+    cursor: pointer;
+
+    transition: background 0.15s ease;
+}
+
+
+.cliente-item:last-child {
+    border-bottom: none;
+}
+
+
+.cliente-item:hover {
+    background: #f5f7fa;
+}
+
+
+.cliente-item-avatar {
+    width: 36px;
+
+    height: 36px;
+
+    min-width: 36px;
+
+    margin-right: 10px;
+
+    border-radius: 50%;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    background: #e9edf2;
+
+    color: #7e8299;
+}
+
+
+.cliente-item-info {
+    flex: 1;
+
+    min-width: 0;
+}
+
+
+.cliente-item-nome {
+    font-size: 13px;
+
+    font-weight: 600;
+
+    color: #3f4254;
+
+    white-space: nowrap;
+
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+}
+
+
+.cliente-item-detalhes {
+    margin-top: 2px;
+
+    font-size: 11px;
+
+    color: #7e8299;
+
+    white-space: nowrap;
+
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+}
+
+
+.cliente-item-arrow {
+    margin-left: 10px;
+
+    font-size: 11px;
+
+    color: #b5b5c3;
+}
+
+
+.cliente-lista-info {
+    padding: 18px;
+
+    text-align: center;
+
+    font-size: 12px;
+
+    color: #7e8299;
+}
+
+
+.cliente-lista-info i {
+    margin-right: 6px;
+}
+
+
+/* Cliente selecionado */
+
+.cliente-selecionado {
+    min-height: 58px;
+
+    padding: 8px 12px;
+
+    border: 1px solid #3699ff;
+
+    border-radius: 6px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    background: #f8fbff;
+}
+
+
+.cliente-selecionado-info {
+    display: flex;
+
+    align-items: center;
+
+    min-width: 0;
+}
+
+
+.cliente-avatar {
+    width: 38px;
+
+    height: 38px;
+
+    min-width: 38px;
+
+    margin-right: 10px;
+
+    border-radius: 50%;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    background: #e9edf2;
+
+    color: #7e8299;
+}
+
+
+.cliente-selecionado-nome {
+    font-size: 13px;
+
+    font-weight: 600;
+
+    color: #3f4254;
+}
+
+
+.cliente-selecionado-detalhes {
+    margin-top: 2px;
+
+    font-size: 11px;
+
+    color: #7e8299;
+}

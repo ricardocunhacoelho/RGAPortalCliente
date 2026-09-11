@@ -1,0 +1,326 @@
+<div class="conversas-page">
+
+    <!-- ========================================================= -->
+    <!-- CABEÇALHO -->
+    <!-- ========================================================= -->
+
+    <div class="page-header">
+
+        <div>
+            <h1>Conversas</h1>
+
+            <p class="page-subtitle">
+                Atendimento e comunicação com clientes pelo WhatsApp.
+            </p>
+        </div>
+
+        <button
+            type="button"
+            class="btn btn-primary"
+            (click)="novaConversa()">
+
+            <i class="fa fa-plus mr-1"></i>
+
+            Nova conversa
+
+        </button>
+
+    </div>
+
+
+    <!-- ========================================================= -->
+    <!-- CONTEÚDO -->
+    <!-- ========================================================= -->
+
+    <div class="conversas-container">
+
+
+        <!-- ======================================================= -->
+        <!-- LISTA DE CONVERSAS -->
+        <!-- ======================================================= -->
+
+        <div class="conversas-list">
+
+
+            <!-- =================================================== -->
+            <!-- BUSCA -->
+            <!-- =================================================== -->
+
+            <div class="conversas-search">
+
+                <div class="search-wrapper">
+
+                    <i class="fa fa-search"></i>
+
+                    <input
+                        type="text"
+                        class="form-control"
+                        [(ngModel)]="keyword"
+                        (keyup.enter)="pesquisar()"
+                        placeholder="Buscar cliente ou telefone...">
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================== -->
+            <!-- ITENS -->
+            <!-- =================================================== -->
+
+            <div
+                class="conversation-items"
+                (scroll)="aoRolarLista($event)">
+
+
+                <!-- =============================================== -->
+                <!-- CARREGANDO -->
+                <!-- =============================================== -->
+
+                <div
+                    class="empty-list"
+                    *ngIf="carregando && conversas.length === 0">
+
+                    <i class="fa fa-spinner fa-spin"></i>
+
+                    <p>
+                        Carregando conversas...
+                    </p>
+
+                </div>
+
+
+                <!-- =============================================== -->
+                <!-- CONVERSAS -->
+                <!-- =============================================== -->
+
+                <div
+                    class="conversation-item"
+                    *ngFor="let conversa of conversas"
+                    [class.selected]="
+                        conversa.id === conversaSelecionadaId
+                    "
+                    (click)="selecionarConversa(conversa)">
+
+
+                    <!-- =========================================== -->
+                    <!-- AVATAR -->
+                    <!-- =========================================== -->
+
+                    <div class="conversation-avatar">
+
+                        {{
+                            conversa.clienteNome
+                                ?.charAt(0)
+                                ?.toUpperCase()
+                        }}
+
+                    </div>
+
+
+                    <!-- =========================================== -->
+                    <!-- CONTEÚDO -->
+                    <!-- =========================================== -->
+
+                    <div class="conversation-content">
+
+
+                        <!-- ======================================= -->
+                        <!-- NOME / HORÁRIO -->
+                        <!-- ======================================= -->
+
+                        <div class="conversation-top">
+
+                            <strong>
+                                {{ conversa.clienteNome }}
+                            </strong>
+
+
+                            <div class="conversation-meta">
+
+                                <span
+                                    class="conversation-time"
+                                    *ngIf="conversa.ultimaMensagemEm">
+
+                                    {{
+                                        conversa.ultimaMensagemEm
+                                            ?.format('HH:mm')
+                                    }}
+
+                                </span>
+
+
+                                <!-- ================================= -->
+                                <!-- NÃO VISUALIZADAS -->
+                                <!-- ================================= -->
+
+                                <span
+                                    class="unread-badge"
+                                    *ngIf="
+                                        conversa.quantidadeNaoVisualizadas > 0
+                                    ">
+
+                                    {{
+                                        conversa.quantidadeNaoVisualizadas > 99
+                                            ? '99+'
+                                            : conversa.quantidadeNaoVisualizadas
+                                    }}
+
+                                </span>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- ======================================= -->
+                        <!-- ÚLTIMA MENSAGEM -->
+                        <!-- ======================================= -->
+
+                        <div class="conversation-preview">
+
+                            <span
+                                class="message-direction"
+                                *ngIf="conversa.ultimaMensagemDoCliente === false">
+
+                                <i class="fa fa-reply"></i>
+
+                            </span>
+
+                            {{
+                                conversa.ultimaMensagem ||
+                                'Nenhuma mensagem ainda'
+                            }}
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- =============================================== -->
+                <!-- CARREGANDO MAIS -->
+                <!-- =============================================== -->
+
+                <div
+                    class="loading-more"
+                    *ngIf="carregandoMais">
+
+                    <i class="fa fa-spinner fa-spin"></i>
+
+                    Carregando mais...
+
+                </div>
+
+
+                <!-- =============================================== -->
+                <!-- NENHUMA CONVERSA -->
+                <!-- =============================================== -->
+
+                <div
+                    class="empty-list"
+                    *ngIf="
+                        !carregando &&
+                        conversas.length === 0
+                    ">
+
+                    <div class="empty-icon">
+
+                        <i class="fa fa-comments"></i>
+
+                    </div>
+
+                    <h5>
+                        Nenhuma conversa encontrada
+                    </h5>
+
+                    <p>
+                        As conversas dos clientes aparecerão aqui.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- ======================================================= -->
+        <!-- ÁREA PRINCIPAL -->
+        <!-- ======================================================= -->
+
+        <div class="conversa-area">
+
+
+            <!-- =================================================== -->
+            <!-- NOVA CONVERSA -->
+            <!-- =================================================== -->
+
+            <app-nova-conversa
+                *ngIf="exibindoNovaConversa"
+                (onClose)="fecharNovaConversa()"
+                (onAbrirConversa)="abrirConversa($event)">
+
+            </app-nova-conversa>
+
+
+            <!-- =================================================== -->
+            <!-- CONVERSA -->
+            <!-- =================================================== -->
+
+            <app-conversa
+                *ngIf="conversaSelecionadaId"
+                [conversaId]="conversaSelecionadaId"
+                (onClose)="fecharConversa()">
+
+            </app-conversa>
+
+
+            <!-- =================================================== -->
+            <!-- NENHUMA CONVERSA SELECIONADA -->
+            <!-- =================================================== -->
+
+            <div
+                class="empty-conversation"
+                *ngIf="
+                    !exibindoNovaConversa &&
+                    !conversaSelecionadaId
+                ">
+
+
+                <div class="empty-conversation-icon">
+
+                    <i class="fa fa-comments"></i>
+
+                </div>
+
+
+                <h3>
+                    Conversas
+                </h3>
+
+
+                <p>
+                    Selecione uma conversa para visualizar as mensagens.
+                </p>
+
+
+                <button
+                    type="button"
+                    class="btn btn-primary"
+                    (click)="novaConversa()">
+
+                    <i class="fa fa-plus mr-1"></i>
+
+                    Nova conversa
+
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>

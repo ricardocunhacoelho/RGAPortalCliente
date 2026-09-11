@@ -1,0 +1,442 @@
+<div class="selecionar-template">
+
+    <!-- Cabeçalho -->
+    <div class="template-header">
+
+        <div>
+
+            <h3>
+                Enviar template
+            </h3>
+
+            <p>
+                Selecione um template aprovado para enviar ao cliente.
+            </p>
+
+        </div>
+
+
+        <button
+            type="button"
+            class="btn btn-sm btn-light"
+            [disabled]="enviando"
+            (click)="fechar()">
+
+            <i class="fa fa-times"></i>
+
+        </button>
+
+    </div>
+
+
+    <!-- Conteúdo -->
+    <div class="template-body">
+
+
+        <!-- Carregando templates -->
+        <div
+            class="template-loading"
+            *ngIf="carregandoTemplates">
+
+            <i class="fa fa-spinner fa-spin"></i>
+
+            <span>
+                Carregando templates...
+            </span>
+
+        </div>
+
+
+        <!-- Nenhum template -->
+        <div
+            class="template-empty"
+            *ngIf="
+                !carregandoTemplates &&
+                templates.length === 0
+            ">
+
+            <div class="template-empty-icon">
+
+                <i class="fa fa-file-alt"></i>
+
+            </div>
+
+            <strong>
+                Nenhum template disponível
+            </strong>
+
+            <span>
+                Não existem templates disponíveis para envio.
+            </span>
+
+        </div>
+
+
+        <!-- Lista de templates -->
+        <div
+            class="template-list"
+            *ngIf="
+                !carregandoTemplates &&
+                templates.length > 0
+            ">
+
+
+            <div class="section-title">
+
+                <span>
+                    Templates aprovados
+                </span>
+
+                <small>
+                    {{ templates.length }}
+                </small>
+
+            </div>
+
+
+            <button
+                type="button"
+                class="template-item"
+                *ngFor="let template of templates"
+                [class.template-item-selected]="
+                    templateSelecionado?.nome === template.nome
+                "
+                (click)="selecionarTemplate(template)">
+
+
+                <div class="template-item-icon">
+
+                    <i class="fa fa-file-alt"></i>
+
+                </div>
+
+
+                <div class="template-item-content">
+
+                    <div class="template-item-title">
+
+                        {{ template.nome }}
+
+                    </div>
+
+
+                    <div class="template-item-info">
+
+                        <span>
+                            {{ template.categoria }}
+                        </span>
+
+                        <span>
+                            {{ template.idioma }}
+                        </span>
+
+                        <span
+                            *ngIf="template.quantidadeParametros > 0">
+
+                            {{ template.quantidadeParametros }}
+                            parâmetro{{ template.quantidadeParametros > 1 ? 's' : '' }}
+
+                        </span>
+
+                    </div>
+
+
+                    <div
+                        class="template-item-preview"
+                        *ngIf="template.corpo">
+
+                        {{ template.corpo }}
+
+                    </div>
+
+                </div>
+
+
+                <div class="template-item-check">
+
+                    <i
+                        *ngIf="
+                            templateSelecionado?.nome === template.nome
+                        "
+                        class="fa fa-check-circle">
+                    </i>
+
+                    <i
+                        *ngIf="
+                            templateSelecionado?.nome !== template.nome
+                        "
+                        class="fa fa-chevron-right">
+                    </i>
+
+                </div>
+
+            </button>
+
+        </div>
+
+
+        <!-- Template selecionado -->
+        <div
+            class="template-config"
+            *ngIf="templateSelecionado">
+
+
+            <div class="section-title">
+
+                <span>
+                    Configurar envio
+                </span>
+
+            </div>
+
+
+            <!-- Informações do template -->
+            <div class="template-selected-info">
+
+                <div class="template-selected-header">
+
+                    <div class="template-selected-icon">
+
+                        <i class="fa fa-file-alt"></i>
+
+                    </div>
+
+
+                    <div>
+
+                        <strong>
+                            {{ templateSelecionado.nome }}
+                        </strong>
+
+                        <span>
+                            {{ templateSelecionado.idioma }}
+                            ·
+                            {{ templateSelecionado.categoria }}
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <div
+                    class="template-header-text"
+                    *ngIf="templateSelecionado.cabecalho">
+
+                    <small>
+                        Cabeçalho
+                    </small>
+
+                    <strong>
+                        {{ templateSelecionado.cabecalho }}
+                    </strong>
+
+                </div>
+
+
+                <div class="template-body-text">
+
+                    <small>
+                        Mensagem
+                    </small>
+
+                    <div>
+                        {{ templateSelecionado.corpo }}
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- Parâmetros -->
+            <div
+                class="parametros-section"
+                *ngIf="
+                    templateSelecionado.quantidadeParametros > 0
+                ">
+
+
+                <div class="parametros-title">
+
+                    <span>
+                        Parâmetros
+                    </span>
+
+                    <small>
+                        Preencha as informações da mensagem.
+                    </small>
+
+                </div>
+
+
+                <div
+                    class="parametro"
+                    *ngFor="
+                        let index of obterIndicesParametros()
+                    ">
+
+
+                    <label>
+
+                        <span class="parametro-numero">
+                            {{ '{{' }}{{ index + 1 }}{{ '}}' }}
+                        </span>
+
+                        {{ obterNomeParametro(index) }}
+
+                        <span class="text-danger">
+                            *
+                        </span>
+
+                    </label>
+
+
+                    <input
+                        type="text"
+                        class="form-control"
+                        [value]="getParametro(index)"
+                        (input)="
+                            alterarParametro(
+                                index,
+                                $any($event.target).value
+                            )
+                        "
+                        [disabled]="enviando"
+                        [placeholder]="
+                            index === 0
+                                ? 'Nome do cliente'
+                                : 'Informe o valor'
+                        ">
+
+                </div>
+
+            </div>
+
+
+            <!-- Prévia -->
+            <div class="preview-section">
+
+
+                <div class="parametros-title">
+
+                    <span>
+                        Prévia
+                    </span>
+
+                    <small>
+                        Assim o cliente receberá a mensagem.
+                    </small>
+
+                </div>
+
+
+                <div class="whatsapp-preview">
+
+
+                    <div class="preview-header">
+
+                        <div class="preview-avatar">
+
+                            <i class="fa fa-building"></i>
+
+                        </div>
+
+
+                        <div>
+
+                            <strong>
+                                {{ conversa?.clienteNome || 'Cliente' }}
+                            </strong>
+
+                            <span>
+                                WhatsApp
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="preview-message">
+
+
+                        <div
+                            class="preview-message-header"
+                            *ngIf="
+                                templateSelecionado.cabecalho
+                            ">
+
+                            {{ templateSelecionado.cabecalho }}
+
+                        </div>
+
+
+                        <div class="preview-message-body">
+
+                            {{ obterPreview() }}
+
+                        </div>
+
+
+                        <div class="preview-message-time">
+
+                            agora
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- Rodapé -->
+    <div class="template-footer">
+
+        <button
+            type="button"
+            class="btn btn-light"
+            [disabled]="enviando"
+            (click)="fechar()">
+
+            Cancelar
+
+        </button>
+
+
+        <button
+            type="button"
+            class="btn btn-primary"
+            [disabled]="
+                !templateSelecionado ||
+                !parametrosValidos() ||
+                enviando
+            "
+            (click)="enviar()">
+
+
+            <i
+                *ngIf="!enviando"
+                class="fa fa-paper-plane mr-1">
+            </i>
+
+
+            <i
+                *ngIf="enviando"
+                class="fa fa-spinner fa-spin mr-1">
+            </i>
+
+
+            {{ enviando ? 'Enviando...' : 'Enviar template' }}
+
+        </button>
+
+    </div>
+
+</div>

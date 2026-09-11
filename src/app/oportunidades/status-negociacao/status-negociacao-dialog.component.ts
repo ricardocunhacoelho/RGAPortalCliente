@@ -1,6 +1,6 @@
 import { ChangeDetectorRef, Component, EventEmitter, Injector, OnInit, Output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { NgFor, NgIf } from '@angular/common';
+import { NgFor, NgIf, NgClass } from '@angular/common';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 
 import { AppComponentBase } from '@shared/app-component-base';
@@ -21,6 +21,7 @@ import {
         FormsModule,
         NgFor,
         NgIf,
+        NgClass,
     ],
 })
 export class StatusNegociacaoDialogComponent

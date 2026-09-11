@@ -59,6 +59,19 @@ import { AppComponent } from './app.component';
                             ),
                         canActivate: [AppRouteGuard],
                     },
+                    {
+                        path: 'conversas',
+                        loadChildren: () =>
+                            import('./conversas/conversas.module')
+                                .then(m => m.ConversasModule)
+                    },
+                    {
+                        path: 'promocoes',
+                        loadChildren: () =>
+                            import('./promocoes/promocoes.module')
+                                .then(m => m.PromocoesModule),
+                        canActivate: [AppRouteGuard]
+                    }
                 ],
             },
         ]),

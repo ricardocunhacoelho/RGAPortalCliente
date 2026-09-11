@@ -1,0 +1,1032 @@
+// ============================================================
+// CONVERSA
+// ============================================================
+
+.conversa {
+    width: 100%;
+    height: 100%;
+    min-width: 0;
+    min-height: 0;
+
+    display: flex;
+    flex-direction: column;
+
+    overflow: hidden;
+
+    background: #fff;
+}
+
+
+// ============================================================
+// CABEÇALHO
+// ============================================================
+
+.conversa-header {
+    flex: 0 0 70px;
+
+    min-height: 70px;
+
+    padding: 12px 20px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    border-bottom: 1px solid #e4e6ef;
+
+    background: #fff;
+}
+
+
+.cliente-info {
+    min-width: 0;
+
+    display: flex;
+    align-items: center;
+}
+
+
+.cliente-avatar {
+    width: 42px;
+    height: 42px;
+
+    flex: 0 0 42px;
+
+    margin-right: 12px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background: #e9edf2;
+
+    color: #7e8299;
+
+    font-size: 15px;
+}
+
+
+.cliente-dados {
+    min-width: 0;
+}
+
+
+.cliente-nome {
+    overflow: hidden;
+
+    font-size: 15px;
+    font-weight: 600;
+
+    text-overflow: ellipsis;
+    white-space: nowrap;
+
+    color: #3f4254;
+}
+
+
+.cliente-telefone {
+    margin-top: 2px;
+
+    overflow: hidden;
+
+    font-size: 12px;
+
+    text-overflow: ellipsis;
+    white-space: nowrap;
+
+    color: #7e8299;
+}
+
+
+.conversa-actions {
+    flex: 0 0 auto;
+
+    display: flex;
+    align-items: center;
+}
+
+
+// ============================================================
+// CORPO DA CONVERSA
+// ============================================================
+
+.conversa-corpo {
+    flex: 1 1 auto;
+
+    min-width: 0;
+    min-height: 0;
+
+    display: flex;
+
+    overflow: hidden;
+
+    background: #f5f7fa;
+}
+
+
+// ============================================================
+// MENSAGENS
+// ============================================================
+
+.mensagens-container {
+    flex: 1 1 auto;
+
+    min-width: 0;
+    min-height: 0;
+
+    overflow-x: hidden;
+    overflow-y: auto;
+
+    padding: 25px;
+
+    background: #f5f7fa;
+
+    scroll-behavior: auto;
+}
+
+
+// ============================================================
+// LOADING INICIAL / ESTADO VAZIO
+// ============================================================
+
+.empty-mensagens {
+    min-height: 200px;
+
+    display: flex;
+    flex-direction: column;
+
+    align-items: center;
+    justify-content: center;
+
+    text-align: center;
+
+    color: #7e8299;
+}
+
+
+.carregando-inicial {
+    height: 100%;
+}
+
+
+.empty-message-icon {
+    width: 60px;
+    height: 60px;
+
+    margin-bottom: 15px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background: #e9edf2;
+
+    font-size: 24px;
+}
+
+
+.empty-mensagens p {
+    margin: 0;
+
+    font-size: 13px;
+}
+
+
+// ============================================================
+// LOADING DE MENSAGENS ANTIGAS
+// ============================================================
+
+.carregando-mais-mensagens {
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    gap: 8px;
+
+    padding: 10px;
+
+    color: #7e8299;
+
+    font-size: 12px;
+}
+
+
+.carregando-mais-mensagens i {
+    font-size: 12px;
+}
+
+
+// ============================================================
+// MENSAGEM
+// ============================================================
+
+.mensagem-item {
+    display: flex;
+
+    width: 100%;
+
+    margin-bottom: 10px;
+}
+
+
+.mensagem-recebida {
+    justify-content: flex-start;
+}
+
+
+.mensagem-enviada {
+    justify-content: flex-end;
+}
+
+
+.mensagem-balao {
+    max-width: 70%;
+
+    padding: 9px 12px;
+
+    border-radius: 10px;
+
+    background: #fff;
+
+    box-shadow:
+        0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+
+.mensagem-enviada .mensagem-balao {
+    background: #e8f5e9;
+}
+
+
+.mensagem-conteudo {
+    font-size: 14px;
+
+    line-height: 1.45;
+
+    color: #3f4254;
+
+    white-space: pre-wrap;
+
+    word-break: break-word;
+}
+
+
+.mensagem-hora {
+    display: flex;
+
+    align-items: center;
+    justify-content: flex-end;
+
+    gap: 4px;
+
+    margin-top: 4px;
+
+    font-size: 10px;
+
+    color: #a1a5b7;
+}
+
+
+// ============================================================
+// PAINEL DE ANÁLISE DA IA
+// ============================================================
+
+.analise-ia-panel {
+    flex: 0 0 360px;
+
+    width: 360px;
+    min-width: 360px;
+
+    height: 100%;
+
+    display: flex;
+    flex-direction: column;
+
+    overflow: hidden;
+
+    border-left: 1px solid #e4e6ef;
+
+    background: #fff;
+}
+
+
+// ============================================================
+// CABEÇALHO DA IA
+// ============================================================
+
+.analise-ia-header {
+    flex: 0 0 70px;
+
+    min-height: 70px;
+
+    padding: 12px 16px;
+
+    display: flex;
+    align-items: center;
+
+    border-bottom: 1px solid #e4e6ef;
+
+    background: #fff;
+}
+
+
+.analise-ia-titulo {
+    min-width: 0;
+
+    display: flex;
+    align-items: center;
+
+    gap: 10px;
+}
+
+
+.analise-ia-icon {
+    width: 38px;
+    height: 38px;
+
+    flex: 0 0 38px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 8px;
+
+    background: #eef4ff;
+
+    color: #3699ff;
+
+    font-size: 16px;
+}
+
+
+.analise-ia-titulo-texto {
+    min-width: 0;
+
+    display: flex;
+    flex-direction: column;
+
+    gap: 2px;
+}
+
+
+.analise-ia-titulo strong {
+    font-size: 14px;
+    font-weight: 600;
+
+    color: #3f4254;
+}
+
+
+.analise-ia-titulo span {
+    overflow: hidden;
+
+    font-size: 11px;
+
+    text-overflow: ellipsis;
+    white-space: nowrap;
+
+    color: #a1a5b7;
+}
+
+
+// ============================================================
+// CONTEÚDO DA IA
+// ============================================================
+
+.analise-ia-conteudo {
+    flex: 1 1 auto;
+
+    min-height: 0;
+
+    overflow-x: hidden;
+    overflow-y: auto;
+
+    padding: 16px;
+}
+
+
+// ============================================================
+// BLOCOS
+// ============================================================
+
+.analise-bloco {
+    padding: 14px 0;
+
+    border-bottom: 1px solid #f0f1f5;
+}
+
+
+.analise-bloco:first-child {
+    padding-top: 0;
+}
+
+
+.analise-bloco:last-child {
+    border-bottom: none;
+}
+
+
+// ============================================================
+// LABEL
+// ============================================================
+
+.analise-label {
+    margin-bottom: 8px;
+
+    display: flex;
+    align-items: center;
+
+    gap: 6px;
+
+    font-size: 10px;
+    font-weight: 600;
+
+    letter-spacing: 0.2px;
+
+    text-transform: uppercase;
+
+    color: #a1a5b7;
+}
+
+
+.analise-label i {
+    font-size: 10px;
+
+    color: #7e8299;
+}
+
+
+// ============================================================
+// STATUS
+// ============================================================
+
+.analise-status {
+    font-size: 13px;
+    font-weight: 600;
+
+    line-height: 1.5;
+
+    color: #3f4254;
+}
+
+
+// ============================================================
+// TEXTO
+// ============================================================
+
+.analise-bloco p {
+    margin: 0;
+
+    font-size: 12px;
+
+    line-height: 1.55;
+
+    color: #5e6278;
+}
+
+
+// ============================================================
+// PROBABILIDADE
+// ============================================================
+
+.probabilidade {
+    width: 100%;
+}
+
+
+.probabilidade-topo {
+    margin-bottom: 7px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 10px;
+}
+
+
+.probabilidade-topo span {
+    font-size: 11px;
+
+    color: #7e8299;
+}
+
+
+.probabilidade-topo strong {
+    flex: 0 0 auto;
+
+    font-size: 18px;
+    font-weight: 700;
+
+    color: #3699ff;
+}
+
+
+.probabilidade-barra {
+    width: 100%;
+    height: 7px;
+
+    overflow: hidden;
+
+    border-radius: 10px;
+
+    background: #e9edf2;
+}
+
+
+.probabilidade-progresso {
+    height: 100%;
+
+    border-radius: 10px;
+
+    background: #3699ff;
+
+    transition: width 0.4s ease;
+}
+
+
+// ============================================================
+// OPORTUNIDADE
+// ============================================================
+
+.oportunidade-status {
+    margin-bottom: 8px;
+
+    display: flex;
+    align-items: center;
+
+    gap: 6px;
+
+    font-size: 12px;
+    font-weight: 600;
+}
+
+
+.oportunidade-status.ativa {
+    color: #2e7d32;
+}
+
+
+.oportunidade-status.inativa {
+    color: #7e8299;
+}
+
+
+// ============================================================
+// DESTAQUE - PRÓXIMA AÇÃO
+// ============================================================
+
+.analise-destaque {
+    margin: 8px 0;
+
+    padding: 13px !important;
+
+    border: 1px solid #e5efff;
+
+    border-radius: 8px;
+
+    background: #f7faff;
+}
+
+
+.analise-destaque .analise-label {
+    color: #3699ff;
+}
+
+
+// ============================================================
+// SUGESTÃO DE RESPOSTA
+// ============================================================
+
+.sugestao-resposta {
+    padding: 12px;
+
+    border-radius: 8px;
+
+    background: #f5f7fa;
+
+    font-size: 12px;
+
+    line-height: 1.55;
+
+    color: #3f4254;
+
+    white-space: pre-wrap;
+
+    word-break: break-word;
+}
+
+
+// ============================================================
+// INSIGHTS
+// ============================================================
+
+.insights-list {
+    margin: 0;
+    padding: 0;
+
+    list-style: none;
+}
+
+
+.insights-list li {
+    display: flex;
+    align-items: flex-start;
+
+    gap: 8px;
+
+    margin-bottom: 9px;
+
+    font-size: 12px;
+
+    line-height: 1.45;
+
+    color: #5e6278;
+}
+
+
+.insights-list li:last-child {
+    margin-bottom: 0;
+}
+
+
+.insights-list li i {
+    flex: 0 0 auto;
+
+    margin-top: 4px;
+
+    font-size: 9px;
+
+    color: #3699ff;
+}
+
+
+// ============================================================
+// LOADING IA
+// ============================================================
+
+.analise-ia-loading {
+    flex: 1;
+
+    min-height: 0;
+
+    padding: 25px;
+
+    display: flex;
+    flex-direction: column;
+
+    align-items: center;
+    justify-content: center;
+
+    text-align: center;
+
+    color: #7e8299;
+}
+
+
+.analise-loading-icon {
+    width: 48px;
+    height: 48px;
+
+    margin-bottom: 14px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background: #eef4ff;
+
+    color: #3699ff;
+
+    font-size: 20px;
+}
+
+
+.analise-ia-loading strong {
+    margin-bottom: 5px;
+
+    font-size: 13px;
+
+    color: #3f4254;
+}
+
+
+.analise-ia-loading span {
+    max-width: 220px;
+
+    font-size: 11px;
+
+    line-height: 1.5;
+
+    color: #7e8299;
+}
+
+
+// ============================================================
+// ERRO IA
+// ============================================================
+
+.analise-ia-erro {
+    flex: 1;
+
+    min-height: 0;
+
+    padding: 25px;
+
+    display: flex;
+    flex-direction: column;
+
+    align-items: center;
+    justify-content: center;
+
+    text-align: center;
+}
+
+
+.analise-erro-icon {
+    width: 48px;
+    height: 48px;
+
+    margin-bottom: 14px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background: #fff8e1;
+
+    color: #f1a700;
+
+    font-size: 20px;
+}
+
+
+.analise-ia-erro strong {
+    margin-bottom: 6px;
+
+    font-size: 13px;
+
+    color: #3f4254;
+}
+
+
+.analise-ia-erro span {
+    max-width: 220px;
+
+    margin-bottom: 15px;
+
+    font-size: 11px;
+
+    line-height: 1.5;
+
+    color: #7e8299;
+}
+
+
+// ============================================================
+// ÁREA DE ENVIO
+// ============================================================
+
+.envio-container {
+    flex: 0 0 auto;
+
+    padding: 12px 15px;
+
+    border-top: 1px solid #e4e6ef;
+
+    background: #fff;
+}
+
+
+.envio-box {
+    display: flex;
+    flex-direction: column;
+}
+
+
+.envio-box textarea {
+    width: 100%;
+
+    resize: none;
+
+    border: none;
+
+    box-shadow: none;
+
+    background: #f5f7fa;
+}
+
+
+.envio-box textarea:focus {
+    border: none;
+
+    box-shadow: none;
+
+    background: #f5f7fa;
+}
+
+
+.envio-actions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    margin-top: 8px;
+}
+
+
+// ============================================================
+// JANELA DE 24 HORAS
+// ============================================================
+
+.janela-mensagem {
+    margin-bottom: 10px;
+}
+
+
+.janela-aberta {
+    min-height: 30px;
+
+    padding: 7px 10px;
+
+    display: flex;
+    align-items: center;
+
+    gap: 8px;
+
+    border-radius: 6px;
+
+    background: #f0f9f4;
+
+    color: #2e7d32;
+
+    font-size: 11px;
+}
+
+
+.janela-aberta i {
+    flex: 0 0 auto;
+
+    font-size: 12px;
+}
+
+
+.janela-expirada {
+    padding: 9px 11px;
+
+    display: flex;
+    align-items: flex-start;
+
+    gap: 10px;
+
+    border-radius: 6px;
+
+    background: #fff8e1;
+
+    color: #795548;
+
+    font-size: 11px;
+}
+
+
+.janela-expirada > i {
+    flex: 0 0 auto;
+
+    margin-top: 2px;
+
+    font-size: 14px;
+}
+
+
+.janela-expirada > div {
+    display: flex;
+    flex-direction: column;
+
+    gap: 2px;
+}
+
+
+.janela-expirada strong {
+    font-size: 11px;
+}
+
+
+.janela-expirada span {
+    font-size: 10px;
+
+    line-height: 1.4;
+
+    color: #8d6e63;
+}
+
+
+// ============================================================
+// RESPONSIVO - NOTEBOOK / TELAS MENORES
+// ============================================================
+
+@media (max-width: 1200px) {
+
+    .analise-ia-panel {
+        flex-basis: 320px;
+
+        width: 320px;
+        min-width: 320px;
+    }
+
+
+    .mensagens-container {
+        padding: 18px;
+    }
+
+
+    .mensagem-balao {
+        max-width: 75%;
+    }
+
+}
+
+
+// ============================================================
+// RESPONSIVO - TABLET / CELULAR
+// ============================================================
+
+@media (max-width: 768px) {
+
+    .conversa-header {
+        flex-basis: 62px;
+
+        min-height: 62px;
+
+        padding: 10px 15px;
+    }
+
+
+    .cliente-avatar {
+        width: 38px;
+        height: 38px;
+
+        flex-basis: 38px;
+    }
+
+
+    .conversa-corpo {
+        display: flex;
+        flex-direction: column;
+
+        overflow-y: auto;
+    }
+
+
+    .mensagens-container {
+        flex: 1 1 60%;
+
+        width: 100%;
+
+        min-height: 300px;
+
+        padding: 15px;
+    }
+
+
+    .analise-ia-panel {
+        flex: 0 0 40%;
+
+        width: 100%;
+        min-width: 0;
+
+        min-height: 280px;
+
+        height: auto;
+
+        border-top: 1px solid #e4e6ef;
+        border-left: none;
+    }
+
+
+    .analise-ia-header {
+        flex-basis: 60px;
+
+        min-height: 60px;
+    }
+
+
+    .mensagem-balao {
+        max-width: 85%;
+    }
+
+
+    .envio-container {
+        padding: 10px;
+    }
+
+}

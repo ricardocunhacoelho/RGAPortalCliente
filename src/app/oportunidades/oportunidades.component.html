@@ -115,9 +115,16 @@
                             track oportunidade.id
                             ) {
 
-                            <div class="opportunity-card" cdkDrag [cdkDragData]="oportunidade"
-                                (cdkDragStarted)="arrastando = true" (cdkDragEnded)="arrastando = false"
-                                (click)="abrirOportunidade(oportunidade.id)">
+                            <div class="opportunity-card" [class.oportunidade-promocao]="oportunidade.veioDePromocao"
+                                cdkDrag [cdkDragData]="oportunidade" (cdkDragStarted)="arrastando = true"
+                                (cdkDragEnded)="arrastando = false" (click)="abrirOportunidade(oportunidade.id)">
+
+                                @if (oportunidade.veioDePromocao) {
+                                <div class="promocao-badge">
+                                    <i class="fas fa-bullhorn"></i>
+                                    Promoção
+                                </div>
+                                }
 
                                 <div class="card-main">
 
@@ -142,7 +149,6 @@
                                     </div>
 
                                 </div>
-
 
                                 <div class="card-footer">
 

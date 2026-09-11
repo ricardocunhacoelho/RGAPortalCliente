@@ -1,6 +1,13 @@
 import { Component, Injector, OnInit } from '@angular/core';
 import { AppComponentBase } from '@shared/app-component-base';
-import { Router, RouterEvent, NavigationEnd, PRIMARY_OUTLET, RouterLink } from '@angular/router';
+import {
+    Router,
+    RouterEvent,
+    NavigationEnd,
+    PRIMARY_OUTLET,
+    RouterLink,
+    RouterLinkActive
+} from '@angular/router';
 import { BehaviorSubject } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { MenuItem } from '@shared/layout/menu-item';
@@ -11,14 +18,20 @@ import { CollapseDirective } from 'ngx-bootstrap/collapse';
     selector: 'sidebar-menu',
     templateUrl: './sidebar-menu.component.html',
     standalone: true,
-    imports: [NgTemplateOutlet, RouterLink, CollapseDirective],
+    imports: [
+        NgTemplateOutlet,
+        RouterLink,
+        RouterLinkActive,
+        CollapseDirective
+    ],
 })
 export class SidebarMenuComponent extends AppComponentBase implements OnInit {
-    menuItems: MenuItem[];
+    menuItems: MenuItem[] = [];
     menuItemsMap: { [key: number]: MenuItem } = {};
     activatedMenuItems: MenuItem[] = [];
-    routerEvents: BehaviorSubject<RouterEvent> = new BehaviorSubject(undefined);
-    homeRoute = '/app/about';
+    routerEvents: BehaviorSubject<RouterEvent | undefined> =
+        new BehaviorSubject<RouterEvent | undefined>(undefined);
+    homeRoute = '/app/home';
 
     constructor(
         injector: Injector,
@@ -28,34 +41,110 @@ export class SidebarMenuComponent extends AppComponentBase implements OnInit {
     }
 
     ngOnInit(): void {
+
         this.menuItems = this.getMenuItems();
+
         this.patchMenuItems(this.menuItems);
 
-        this.router.events.subscribe((event: NavigationEnd) => {
-            const currentUrl = event.url !== '/' ? event.url : this.homeRoute;
-            const primaryUrlSegmentGroup = this.router.parseUrl(currentUrl).root.children[PRIMARY_OUTLET];
-            if (primaryUrlSegmentGroup) {
-                this.activateMenuItems('/' + primaryUrlSegmentGroup.toString());
-            }
-        });
+
+        // Ativa o item correspondente à rota atual
+        this.atualizarMenuAtivo(this.router.url);
+
+
+        // Atualiza quando houver navegação
+        this.router.events
+            .pipe(
+                filter(
+                    (event): event is NavigationEnd =>
+                        event instanceof NavigationEnd
+                )
+            )
+            .subscribe((event: NavigationEnd) => {
+
+                this.atualizarMenuAtivo(event.urlAfterRedirects);
+
+            });
+    }
+
+    private atualizarMenuAtivo(url: string): void {
+
+        const currentUrl =
+            url !== '/'
+                ? url
+                : this.homeRoute;
+
+
+        const primaryUrlSegmentGroup =
+            this.router
+                .parseUrl(currentUrl)
+                .root
+                .children[PRIMARY_OUTLET];
+
+
+        if (!primaryUrlSegmentGroup) {
+            return;
+        }
+
+
+        const rota =
+            '/' + primaryUrlSegmentGroup.toString();
+
+
+        this.activateMenuItems(rota);
     }
 
     getMenuItems(): MenuItem[] {
         return [
-            new MenuItem(this.l('HomePage'), '/app/home', 'fas fa-home'),
+            new MenuItem(
+                this.l('HomePage'),
+                '/app/home',
+                'fas fa-home'
+            ),
+
             new MenuItem(
                 'Oportunidades',
                 '/app/oportunidades',
                 'fas fa-handshake'
             ),
+
+            new MenuItem(
+                'Conversas',
+                '/app/conversas',
+                'fab fa-whatsapp'
+            ),
+
+            new MenuItem(
+                'Promoções',
+                '/app/promocoes',
+                'fas fa-bullhorn'
+            ),
+
             new MenuItem(
                 'Clientes',
                 '/app/clientes',
                 'fas fa-users'
             ),
-            new MenuItem(this.l('Roles'), '/app/roles', 'fas fa-theater-masks', 'Pages.Roles'),
-            new MenuItem(this.l('Tenants'), '/app/tenants', 'fas fa-building', 'Pages.Tenants'),
-            new MenuItem(this.l('Users'), '/app/users', 'fas fa-users', 'Pages.Users'),
+
+            new MenuItem(
+                this.l('Roles'),
+                '/app/roles',
+                'fas fa-theater-masks',
+                'Pages.Roles'
+            ),
+
+            new MenuItem(
+                this.l('Tenants'),
+                '/app/tenants',
+                'fas fa-building',
+                'Pages.Tenants'
+            ),
+
+            new MenuItem(
+                this.l('Users'),
+                '/app/users',
+                'fas fa-users',
+                'Pages.Users'
+            ),
         ];
     }
 
@@ -75,11 +164,23 @@ export class SidebarMenuComponent extends AppComponentBase implements OnInit {
     }
 
     activateMenuItems(url: string): void {
+
         this.deactivateMenuItems(this.menuItems);
+
         this.activatedMenuItems = [];
-        const foundedItems = this.findMenuItemsByUrl(url, this.menuItems);
+
+
+        const foundedItems =
+            this.findMenuItemsByUrl(
+                url,
+                this.menuItems
+            );
+
+
         foundedItems.forEach((item) => {
+
             this.activateMenuItem(item);
+
         });
     }
 
@@ -93,14 +194,37 @@ export class SidebarMenuComponent extends AppComponentBase implements OnInit {
         });
     }
 
-    findMenuItemsByUrl(url: string, items: MenuItem[], foundedItems: MenuItem[] = []): MenuItem[] {
+    findMenuItemsByUrl(
+        url: string,
+        items: MenuItem[],
+        foundedItems: MenuItem[] = []
+    ): MenuItem[] {
+
         items.forEach((item: MenuItem) => {
-            if (item.route === url) {
+
+            if (
+                item.route &&
+                (
+                    item.route === url ||
+                    url.startsWith(item.route + '/')
+                )
+            ) {
+
                 foundedItems.push(item);
-            } else if (item.children) {
-                this.findMenuItemsByUrl(url, item.children, foundedItems);
+
             }
+            else if (item.children) {
+
+                this.findMenuItemsByUrl(
+                    url,
+                    item.children,
+                    foundedItems
+                );
+
+            }
+
         });
+
         return foundedItems;
     }
 

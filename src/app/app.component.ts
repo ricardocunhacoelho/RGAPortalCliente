@@ -6,6 +6,8 @@ import { HeaderComponent } from './layout/header.component';
 import { SidebarComponent } from './layout/sidebar.component';
 import { RouterOutlet } from '@angular/router';
 import { FooterComponent } from './layout/footer.component';
+import { WhatsAppSignalRService }
+    from '@shared/services/whatsapp-signalr.service';
 
 @Component({
     templateUrl: './app.component.html',
@@ -18,34 +20,70 @@ export class AppComponent extends AppComponentBase implements OnInit {
     constructor(
         injector: Injector,
         private renderer: Renderer2,
-        private _layoutStore: LayoutStoreService
+        private _layoutStore: LayoutStoreService,
+        private _whatsAppSignalR:
+            WhatsAppSignalRService
     ) {
         super(injector);
     }
-
     ngOnInit(): void {
-        this.renderer.addClass(document.body, 'sidebar-mini');
 
-        SignalRAspNetCoreHelper.initSignalR();
+        this.renderer.addClass(
+            document.body,
+            'sidebar-mini'
+        );
 
-        abp.event.on('abp.notifications.received', (userNotification) => {
-            abp.notifications.showUiNotifyForUserNotification(userNotification);
+        SignalRAspNetCoreHelper.initSignalR(() => {
 
-            // Desktop notification
-            Push.create('AbpZeroTemplate', {
-                body: userNotification.notification.data.message,
-                icon: abp.appPath + 'assets/app-logo-small.png',
-                timeout: 6000,
-                onClick: function () {
-                    window.focus();
-                    this.close();
-                },
+            console.log(
+                '[SignalR] Cliente ABP carregado.'
+            );
+
+        });
+
+        this._whatsAppSignalR.conectar();
+
+        abp.event.on(
+            'abp.notifications.received',
+            (userNotification) => {
+
+                abp.notifications
+                    .showUiNotifyForUserNotification(
+                        userNotification
+                    );
+
+                Push.create(
+                    'AbpZeroTemplate',
+                    {
+                        body:
+                            userNotification
+                                .notification
+                                .data
+                                .message,
+
+                        icon:
+                            abp.appPath +
+                            'assets/app-logo-small.png',
+
+                        timeout: 6000,
+
+                        onClick: function () {
+                            window.focus();
+                            this.close();
+                        },
+                    }
+                );
+            }
+        );
+
+
+        this._layoutStore
+            .sidebarExpanded
+            .subscribe((value) => {
+
+                this.sidebarExpanded = value;
+
             });
-        });
-
-        this._layoutStore.sidebarExpanded.subscribe((value) => {
-            this.sidebarExpanded = value;
-        });
     }
 
     toggleSidebar(): void {

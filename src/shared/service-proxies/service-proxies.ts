@@ -142,6 +142,74 @@ export class AccountServiceProxy {
 }
 
 @Injectable()
+export class AnalisesIAServiceProxy {
+    private http: HttpClient;
+    private baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
+    constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl ?? "";
+    }
+
+    /**
+     * @param conversaId (optional) 
+     * @return OK
+     */
+    analisarConversa(conversaId: string | undefined): Observable<AnaliseConversaDto> {
+        let url_ = this.baseUrl + "/api/services/app/AnalisesIA/AnalisarConversa?";
+        if (conversaId === null)
+            throw new Error("The parameter 'conversaId' cannot be null.");
+        else if (conversaId !== undefined)
+            url_ += "conversaId=" + encodeURIComponent("" + conversaId) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "text/plain"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processAnalisarConversa(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processAnalisarConversa(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<AnaliseConversaDto>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<AnaliseConversaDto>;
+        }));
+    }
+
+    protected processAnalisarConversa(response: HttpResponseBase): Observable<AnaliseConversaDto> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = AnaliseConversaDto.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+}
+
+@Injectable()
 export class ClientesServiceProxy {
     private http: HttpClient;
     private baseUrl: string;
@@ -666,6 +734,1300 @@ export class ConfigurationServiceProxy {
     }
 
     protected processChangeUiTheme(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return _observableOf(null as any);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+}
+
+@Injectable()
+export class ConversasServiceProxy {
+    private http: HttpClient;
+    private baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
+    constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl ?? "";
+    }
+
+    /**
+     * @param id (optional) 
+     * @return OK
+     */
+    get(id: string | undefined): Observable<ConversaDto> {
+        let url_ = this.baseUrl + "/api/services/app/Conversas/Get?";
+        if (id === null)
+            throw new Error("The parameter 'id' cannot be null.");
+        else if (id !== undefined)
+            url_ += "Id=" + encodeURIComponent("" + id) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "text/plain"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGet(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGet(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<ConversaDto>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<ConversaDto>;
+        }));
+    }
+
+    protected processGet(response: HttpResponseBase): Observable<ConversaDto> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = ConversaDto.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
+    /**
+     * @param keyword (optional) 
+     * @param clienteId (optional) 
+     * @param vendedorId (optional) 
+     * @param ativa (optional) 
+     * @param skipCount (optional) 
+     * @param maxResultCount (optional) 
+     * @return OK
+     */
+    getAll(keyword: string | undefined, clienteId: string | undefined, vendedorId: string | undefined, ativa: boolean | undefined, skipCount: number | undefined, maxResultCount: number | undefined): Observable<ConversaDtoPagedResultDto> {
+        let url_ = this.baseUrl + "/api/services/app/Conversas/GetAll?";
+        if (keyword === null)
+            throw new Error("The parameter 'keyword' cannot be null.");
+        else if (keyword !== undefined)
+            url_ += "Keyword=" + encodeURIComponent("" + keyword) + "&";
+        if (clienteId === null)
+            throw new Error("The parameter 'clienteId' cannot be null.");
+        else if (clienteId !== undefined)
+            url_ += "ClienteId=" + encodeURIComponent("" + clienteId) + "&";
+        if (vendedorId === null)
+            throw new Error("The parameter 'vendedorId' cannot be null.");
+        else if (vendedorId !== undefined)
+            url_ += "VendedorId=" + encodeURIComponent("" + vendedorId) + "&";
+        if (ativa === null)
+            throw new Error("The parameter 'ativa' cannot be null.");
+        else if (ativa !== undefined)
+            url_ += "Ativa=" + encodeURIComponent("" + ativa) + "&";
+        if (skipCount === null)
+            throw new Error("The parameter 'skipCount' cannot be null.");
+        else if (skipCount !== undefined)
+            url_ += "SkipCount=" + encodeURIComponent("" + skipCount) + "&";
+        if (maxResultCount === null)
+            throw new Error("The parameter 'maxResultCount' cannot be null.");
+        else if (maxResultCount !== undefined)
+            url_ += "MaxResultCount=" + encodeURIComponent("" + maxResultCount) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "text/plain"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetAll(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetAll(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<ConversaDtoPagedResultDto>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<ConversaDtoPagedResultDto>;
+        }));
+    }
+
+    protected processGetAll(response: HttpResponseBase): Observable<ConversaDtoPagedResultDto> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = ConversaDtoPagedResultDto.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
+    /**
+     * @param clienteId (optional) 
+     * @return OK
+     */
+    getConversasDoCliente(clienteId: string | undefined): Observable<ConversaDto[]> {
+        let url_ = this.baseUrl + "/api/services/app/Conversas/GetConversasDoCliente?";
+        if (clienteId === null)
+            throw new Error("The parameter 'clienteId' cannot be null.");
+        else if (clienteId !== undefined)
+            url_ += "clienteId=" + encodeURIComponent("" + clienteId) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "text/plain"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetConversasDoCliente(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetConversasDoCliente(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<ConversaDto[]>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<ConversaDto[]>;
+        }));
+    }
+
+    protected processGetConversasDoCliente(response: HttpResponseBase): Observable<ConversaDto[]> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (Array.isArray(resultData200)) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200.push(ConversaDto.fromJS(item));
+            }
+            else {
+                result200 = <any>null;
+            }
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
+    /**
+     * @param telefone (optional) 
+     * @return OK
+     */
+    getByTelefone(telefone: string | undefined): Observable<ConversaDto> {
+        let url_ = this.baseUrl + "/api/services/app/Conversas/GetByTelefone?";
+        if (telefone === null)
+            throw new Error("The parameter 'telefone' cannot be null.");
+        else if (telefone !== undefined)
+            url_ += "telefone=" + encodeURIComponent("" + telefone) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "text/plain"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetByTelefone(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetByTelefone(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<ConversaDto>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<ConversaDto>;
+        }));
+    }
+
+    protected processGetByTelefone(response: HttpResponseBase): Observable<ConversaDto> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = ConversaDto.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
+    /**
+     * @param identificador (optional) 
+     * @return OK
+     */
+    getByIdentificadorExterno(identificador: string | undefined): Observable<ConversaDto> {
+        let url_ = this.baseUrl + "/api/services/app/Conversas/GetByIdentificadorExterno?";
+        if (identificador === null)
+            throw new Error("The parameter 'identificador' cannot be null.");
+        else if (identificador !== undefined)
+            url_ += "identificador=" + encodeURIComponent("" + identificador) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "text/plain"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetByIdentificadorExterno(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetByIdentificadorExterno(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<ConversaDto>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<ConversaDto>;
+        }));
+    }
+
+    protected processGetByIdentificadorExterno(response: HttpResponseBase): Observable<ConversaDto> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = ConversaDto.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
+    /**
+     * @param body (optional) 
+     * @return OK
+     */
+    criarOuObter(body: CriarOuObterConversaDto | undefined): Observable<ConversaDto> {
+        let url_ = this.baseUrl + "/api/services/app/Conversas/CriarOuObter";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json",
+                "Accept": "text/plain"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processCriarOuObter(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processCriarOuObter(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<ConversaDto>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<ConversaDto>;
+        }));
+    }
+
+    protected processCriarOuObter(response: HttpResponseBase): Observable<ConversaDto> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = ConversaDto.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
+    /**
+     * @param body (optional) 
+     * @return OK
+     */
+    vincularVendedor(body: VincularVendedorConversaDto | undefined): Observable<ConversaDto> {
+        let url_ = this.baseUrl + "/api/services/app/Conversas/VincularVendedor";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json",
+                "Accept": "text/plain"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processVincularVendedor(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processVincularVendedor(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<ConversaDto>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<ConversaDto>;
+        }));
+    }
+
+    protected processVincularVendedor(response: HttpResponseBase): Observable<ConversaDto> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = ConversaDto.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
+    /**
+     * @return OK
+     */
+    getConversasRecentes(): Observable<ConversaDto[]> {
+        let url_ = this.baseUrl + "/api/services/app/Conversas/GetConversasRecentes";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "text/plain"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetConversasRecentes(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetConversasRecentes(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<ConversaDto[]>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<ConversaDto[]>;
+        }));
+    }
+
+    protected processGetConversasRecentes(response: HttpResponseBase): Observable<ConversaDto[]> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (Array.isArray(resultData200)) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200.push(ConversaDto.fromJS(item));
+            }
+            else {
+                result200 = <any>null;
+            }
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
+    /**
+     * @param vendedorId (optional) 
+     * @return OK
+     */
+    getConversasDoVendedor(vendedorId: string | undefined): Observable<ConversaDto[]> {
+        let url_ = this.baseUrl + "/api/services/app/Conversas/GetConversasDoVendedor?";
+        if (vendedorId === null)
+            throw new Error("The parameter 'vendedorId' cannot be null.");
+        else if (vendedorId !== undefined)
+            url_ += "vendedorId=" + encodeURIComponent("" + vendedorId) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "text/plain"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetConversasDoVendedor(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetConversasDoVendedor(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<ConversaDto[]>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<ConversaDto[]>;
+        }));
+    }
+
+    protected processGetConversasDoVendedor(response: HttpResponseBase): Observable<ConversaDto[]> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (Array.isArray(resultData200)) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200.push(ConversaDto.fromJS(item));
+            }
+            else {
+                result200 = <any>null;
+            }
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
+    /**
+     * @param keyword (optional) 
+     * @param clienteId (optional) 
+     * @param vendedorId (optional) 
+     * @param ativa (optional) 
+     * @param skipCount (optional) 
+     * @param maxResultCount (optional) 
+     * @return OK
+     */
+    getMinhasConversas(keyword: string | undefined, clienteId: string | undefined, vendedorId: string | undefined, ativa: boolean | undefined, skipCount: number | undefined, maxResultCount: number | undefined): Observable<ConversaResumoDtoPagedResultDto> {
+        let url_ = this.baseUrl + "/api/services/app/Conversas/GetMinhasConversas?";
+        if (keyword === null)
+            throw new Error("The parameter 'keyword' cannot be null.");
+        else if (keyword !== undefined)
+            url_ += "Keyword=" + encodeURIComponent("" + keyword) + "&";
+        if (clienteId === null)
+            throw new Error("The parameter 'clienteId' cannot be null.");
+        else if (clienteId !== undefined)
+            url_ += "ClienteId=" + encodeURIComponent("" + clienteId) + "&";
+        if (vendedorId === null)
+            throw new Error("The parameter 'vendedorId' cannot be null.");
+        else if (vendedorId !== undefined)
+            url_ += "VendedorId=" + encodeURIComponent("" + vendedorId) + "&";
+        if (ativa === null)
+            throw new Error("The parameter 'ativa' cannot be null.");
+        else if (ativa !== undefined)
+            url_ += "Ativa=" + encodeURIComponent("" + ativa) + "&";
+        if (skipCount === null)
+            throw new Error("The parameter 'skipCount' cannot be null.");
+        else if (skipCount !== undefined)
+            url_ += "SkipCount=" + encodeURIComponent("" + skipCount) + "&";
+        if (maxResultCount === null)
+            throw new Error("The parameter 'maxResultCount' cannot be null.");
+        else if (maxResultCount !== undefined)
+            url_ += "MaxResultCount=" + encodeURIComponent("" + maxResultCount) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "text/plain"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetMinhasConversas(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetMinhasConversas(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<ConversaResumoDtoPagedResultDto>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<ConversaResumoDtoPagedResultDto>;
+        }));
+    }
+
+    protected processGetMinhasConversas(response: HttpResponseBase): Observable<ConversaResumoDtoPagedResultDto> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = ConversaResumoDtoPagedResultDto.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
+    /**
+     * @param conversaId (optional) 
+     * @return OK
+     */
+    obterQuantidadeNaoVisualizadas(conversaId: string | undefined): Observable<number> {
+        let url_ = this.baseUrl + "/api/services/app/Conversas/ObterQuantidadeNaoVisualizadas?";
+        if (conversaId === null)
+            throw new Error("The parameter 'conversaId' cannot be null.");
+        else if (conversaId !== undefined)
+            url_ += "conversaId=" + encodeURIComponent("" + conversaId) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "text/plain"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processObterQuantidadeNaoVisualizadas(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processObterQuantidadeNaoVisualizadas(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<number>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<number>;
+        }));
+    }
+
+    protected processObterQuantidadeNaoVisualizadas(response: HttpResponseBase): Observable<number> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+                result200 = resultData200 !== undefined ? resultData200 : <any>null;
+    
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
+    /**
+     * @return OK
+     */
+    obterQuantidadeNaoVisualizadasTodas(): Observable<number> {
+        let url_ = this.baseUrl + "/api/services/app/Conversas/ObterQuantidadeNaoVisualizadasTodas";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "text/plain"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processObterQuantidadeNaoVisualizadasTodas(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processObterQuantidadeNaoVisualizadasTodas(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<number>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<number>;
+        }));
+    }
+
+    protected processObterQuantidadeNaoVisualizadasTodas(response: HttpResponseBase): Observable<number> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+                result200 = resultData200 !== undefined ? resultData200 : <any>null;
+    
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
+    /**
+     * @param conversaId (optional) 
+     * @return OK
+     */
+    marcarComoVisualizadas(conversaId: string | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/app/Conversas/MarcarComoVisualizadas?";
+        if (conversaId === null)
+            throw new Error("The parameter 'conversaId' cannot be null.");
+        else if (conversaId !== undefined)
+            url_ += "conversaId=" + encodeURIComponent("" + conversaId) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processMarcarComoVisualizadas(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processMarcarComoVisualizadas(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<void>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<void>;
+        }));
+    }
+
+    protected processMarcarComoVisualizadas(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return _observableOf(null as any);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+}
+
+@Injectable()
+export class DashboardServiceProxy {
+    private http: HttpClient;
+    private baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
+    constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl ?? "";
+    }
+
+    /**
+     * @return OK
+     */
+    obter(): Observable<DashboardDto> {
+        let url_ = this.baseUrl + "/api/services/app/Dashboard/Obter";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "text/plain"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processObter(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processObter(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<DashboardDto>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<DashboardDto>;
+        }));
+    }
+
+    protected processObter(response: HttpResponseBase): Observable<DashboardDto> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = DashboardDto.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+}
+
+@Injectable()
+export class MensagensServiceProxy {
+    private http: HttpClient;
+    private baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
+    constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl ?? "";
+    }
+
+    /**
+     * @param id (optional) 
+     * @return OK
+     */
+    get(id: string | undefined): Observable<MensagemDto> {
+        let url_ = this.baseUrl + "/api/services/app/Mensagens/Get?";
+        if (id === null)
+            throw new Error("The parameter 'id' cannot be null.");
+        else if (id !== undefined)
+            url_ += "Id=" + encodeURIComponent("" + id) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "text/plain"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGet(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGet(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<MensagemDto>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<MensagemDto>;
+        }));
+    }
+
+    protected processGet(response: HttpResponseBase): Observable<MensagemDto> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = MensagemDto.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
+    /**
+     * @param conversaId (optional) 
+     * @param keyword (optional) 
+     * @param sorting (optional) 
+     * @param sortDirection (optional) 
+     * @param skipCount (optional) 
+     * @param maxResultCount (optional) 
+     * @return OK
+     */
+    getAll(conversaId: string | undefined, keyword: string | undefined, sorting: string | undefined, sortDirection: string | undefined, skipCount: number | undefined, maxResultCount: number | undefined): Observable<MensagemDtoPagedResultDto> {
+        let url_ = this.baseUrl + "/api/services/app/Mensagens/GetAll?";
+        if (conversaId === null)
+            throw new Error("The parameter 'conversaId' cannot be null.");
+        else if (conversaId !== undefined)
+            url_ += "ConversaId=" + encodeURIComponent("" + conversaId) + "&";
+        if (keyword === null)
+            throw new Error("The parameter 'keyword' cannot be null.");
+        else if (keyword !== undefined)
+            url_ += "Keyword=" + encodeURIComponent("" + keyword) + "&";
+        if (sorting === null)
+            throw new Error("The parameter 'sorting' cannot be null.");
+        else if (sorting !== undefined)
+            url_ += "Sorting=" + encodeURIComponent("" + sorting) + "&";
+        if (sortDirection === null)
+            throw new Error("The parameter 'sortDirection' cannot be null.");
+        else if (sortDirection !== undefined)
+            url_ += "SortDirection=" + encodeURIComponent("" + sortDirection) + "&";
+        if (skipCount === null)
+            throw new Error("The parameter 'skipCount' cannot be null.");
+        else if (skipCount !== undefined)
+            url_ += "SkipCount=" + encodeURIComponent("" + skipCount) + "&";
+        if (maxResultCount === null)
+            throw new Error("The parameter 'maxResultCount' cannot be null.");
+        else if (maxResultCount !== undefined)
+            url_ += "MaxResultCount=" + encodeURIComponent("" + maxResultCount) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "text/plain"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetAll(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetAll(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<MensagemDtoPagedResultDto>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<MensagemDtoPagedResultDto>;
+        }));
+    }
+
+    protected processGetAll(response: HttpResponseBase): Observable<MensagemDtoPagedResultDto> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = MensagemDtoPagedResultDto.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
+    /**
+     * @param conversaId (optional) 
+     * @return OK
+     */
+    getByConversa(conversaId: string | undefined): Observable<MensagemDto[]> {
+        let url_ = this.baseUrl + "/api/services/app/Mensagens/GetByConversa?";
+        if (conversaId === null)
+            throw new Error("The parameter 'conversaId' cannot be null.");
+        else if (conversaId !== undefined)
+            url_ += "conversaId=" + encodeURIComponent("" + conversaId) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "text/plain"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetByConversa(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetByConversa(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<MensagemDto[]>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<MensagemDto[]>;
+        }));
+    }
+
+    protected processGetByConversa(response: HttpResponseBase): Observable<MensagemDto[]> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (Array.isArray(resultData200)) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200.push(MensagemDto.fromJS(item));
+            }
+            else {
+                result200 = <any>null;
+            }
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
+    /**
+     * @param body (optional) 
+     * @return OK
+     */
+    criarRecebida(body: CriarMensagemDto | undefined): Observable<MensagemDto> {
+        let url_ = this.baseUrl + "/api/services/app/Mensagens/CriarRecebida";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json",
+                "Accept": "text/plain"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processCriarRecebida(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processCriarRecebida(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<MensagemDto>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<MensagemDto>;
+        }));
+    }
+
+    protected processCriarRecebida(response: HttpResponseBase): Observable<MensagemDto> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = MensagemDto.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
+    /**
+     * @param body (optional) 
+     * @return OK
+     */
+    criarEnviada(body: CriarMensagemDto | undefined): Observable<MensagemDto> {
+        let url_ = this.baseUrl + "/api/services/app/Mensagens/CriarEnviada";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json",
+                "Accept": "text/plain"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processCriarEnviada(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processCriarEnviada(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<MensagemDto>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<MensagemDto>;
+        }));
+    }
+
+    protected processCriarEnviada(response: HttpResponseBase): Observable<MensagemDto> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = MensagemDto.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
+    /**
+     * @param body (optional) 
+     * @return OK
+     */
+    salvarMensagemWhatsApp(body: SalvarMensagemWhatsAppDto | undefined): Observable<MensagemDto> {
+        let url_ = this.baseUrl + "/api/services/app/Mensagens/SalvarMensagemWhatsApp";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json",
+                "Accept": "text/plain"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processSalvarMensagemWhatsApp(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processSalvarMensagemWhatsApp(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<MensagemDto>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<MensagemDto>;
+        }));
+    }
+
+    protected processSalvarMensagemWhatsApp(response: HttpResponseBase): Observable<MensagemDto> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = MensagemDto.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
+    /**
+     * @param body (optional) 
+     * @return OK
+     */
+    marcarComoProcessadaPorIA(body: GuidEntityDto | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/app/Mensagens/MarcarComoProcessadaPorIA";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json",
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processMarcarComoProcessadaPorIA(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processMarcarComoProcessadaPorIA(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<void>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<void>;
+        }));
+    }
+
+    protected processMarcarComoProcessadaPorIA(response: HttpResponseBase): Observable<void> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -1343,6 +2705,188 @@ export class OportunidadesServiceProxy {
         if (status === 200) {
             return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
             return _observableOf(null as any);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+}
+
+@Injectable()
+export class PromocoesServiceProxy {
+    private http: HttpClient;
+    private baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
+    constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl ?? "";
+    }
+
+    /**
+     * @param body (optional) 
+     * @return OK
+     */
+    criar(body: CriarPromocaoDto | undefined): Observable<PromocaoDto> {
+        let url_ = this.baseUrl + "/api/services/app/Promocoes/Criar";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json",
+                "Accept": "text/plain"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processCriar(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processCriar(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<PromocaoDto>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<PromocaoDto>;
+        }));
+    }
+
+    protected processCriar(response: HttpResponseBase): Observable<PromocaoDto> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = PromocaoDto.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
+    /**
+     * @param id (optional) 
+     * @return OK
+     */
+    obter(id: string | undefined): Observable<PromocaoDto> {
+        let url_ = this.baseUrl + "/api/services/app/Promocoes/Obter?";
+        if (id === null)
+            throw new Error("The parameter 'id' cannot be null.");
+        else if (id !== undefined)
+            url_ += "id=" + encodeURIComponent("" + id) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "text/plain"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processObter(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processObter(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<PromocaoDto>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<PromocaoDto>;
+        }));
+    }
+
+    protected processObter(response: HttpResponseBase): Observable<PromocaoDto> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = PromocaoDto.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
+    /**
+     * @return OK
+     */
+    obterTodas(): Observable<PromocaoDto[]> {
+        let url_ = this.baseUrl + "/api/services/app/Promocoes/ObterTodas";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "text/plain"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processObterTodas(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processObterTodas(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<PromocaoDto[]>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<PromocaoDto[]>;
+        }));
+    }
+
+    protected processObterTodas(response: HttpResponseBase): Observable<PromocaoDto[]> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (Array.isArray(resultData200)) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200.push(PromocaoDto.fromJS(item));
+            }
+            else {
+                result200 = <any>null;
+            }
+            return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
             return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
@@ -3712,6 +5256,871 @@ export class VendedoresServiceProxy {
     }
 }
 
+@Injectable()
+export class WhatsAppServiceProxy {
+    private http: HttpClient;
+    private baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
+    constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl ?? "";
+    }
+
+    /**
+     * @param body (optional) 
+     * @return OK
+     */
+    enviarMensagem(body: EnviarMensagemWhatsAppDto | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/app/WhatsApp/EnviarMensagem";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json",
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processEnviarMensagem(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processEnviarMensagem(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<void>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<void>;
+        }));
+    }
+
+    protected processEnviarMensagem(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return _observableOf(null as any);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
+    /**
+     * @param body (optional) 
+     * @return OK
+     */
+    enviarTemplate(body: EnviarTemplateWhatsAppDto | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/app/WhatsApp/EnviarTemplate";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json",
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processEnviarTemplate(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processEnviarTemplate(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<void>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<void>;
+        }));
+    }
+
+    protected processEnviarTemplate(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return _observableOf(null as any);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
+    /**
+     * @return OK
+     */
+    obterTemplates(): Observable<WhatsAppTemplateDto[]> {
+        let url_ = this.baseUrl + "/api/services/app/WhatsApp/ObterTemplates";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "text/plain"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processObterTemplates(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processObterTemplates(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<WhatsAppTemplateDto[]>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<WhatsAppTemplateDto[]>;
+        }));
+    }
+
+    protected processObterTemplates(response: HttpResponseBase): Observable<WhatsAppTemplateDto[]> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (Array.isArray(resultData200)) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200.push(WhatsAppTemplateDto.fromJS(item));
+            }
+            else {
+                result200 = <any>null;
+            }
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+}
+
+@Injectable()
+export class WhatsAppConfiguracoesServiceProxy {
+    private http: HttpClient;
+    private baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
+    constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl ?? "";
+    }
+
+    /**
+     * @param id (optional) 
+     * @return OK
+     */
+    get(id: string | undefined): Observable<WhatsAppConfiguracaoDto> {
+        let url_ = this.baseUrl + "/api/services/app/WhatsAppConfiguracoes/Get?";
+        if (id === null)
+            throw new Error("The parameter 'id' cannot be null.");
+        else if (id !== undefined)
+            url_ += "Id=" + encodeURIComponent("" + id) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "text/plain"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGet(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGet(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<WhatsAppConfiguracaoDto>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<WhatsAppConfiguracaoDto>;
+        }));
+    }
+
+    protected processGet(response: HttpResponseBase): Observable<WhatsAppConfiguracaoDto> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = WhatsAppConfiguracaoDto.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
+    /**
+     * @return OK
+     */
+    getAll(): Observable<WhatsAppConfiguracaoDto[]> {
+        let url_ = this.baseUrl + "/api/services/app/WhatsAppConfiguracoes/GetAll";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "text/plain"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetAll(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetAll(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<WhatsAppConfiguracaoDto[]>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<WhatsAppConfiguracaoDto[]>;
+        }));
+    }
+
+    protected processGetAll(response: HttpResponseBase): Observable<WhatsAppConfiguracaoDto[]> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (Array.isArray(resultData200)) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200.push(WhatsAppConfiguracaoDto.fromJS(item));
+            }
+            else {
+                result200 = <any>null;
+            }
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
+    /**
+     * @param vendedorId (optional) 
+     * @return OK
+     */
+    getByVendedor(vendedorId: string | undefined): Observable<WhatsAppConfiguracaoDto> {
+        let url_ = this.baseUrl + "/api/services/app/WhatsAppConfiguracoes/GetByVendedor?";
+        if (vendedorId === null)
+            throw new Error("The parameter 'vendedorId' cannot be null.");
+        else if (vendedorId !== undefined)
+            url_ += "vendedorId=" + encodeURIComponent("" + vendedorId) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "text/plain"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetByVendedor(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetByVendedor(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<WhatsAppConfiguracaoDto>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<WhatsAppConfiguracaoDto>;
+        }));
+    }
+
+    protected processGetByVendedor(response: HttpResponseBase): Observable<WhatsAppConfiguracaoDto> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = WhatsAppConfiguracaoDto.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
+    /**
+     * @param phoneNumberId (optional) 
+     * @return OK
+     */
+    getByPhoneNumberId(phoneNumberId: string | undefined): Observable<WhatsAppConfiguracaoDto> {
+        let url_ = this.baseUrl + "/api/services/app/WhatsAppConfiguracoes/GetByPhoneNumberId?";
+        if (phoneNumberId === null)
+            throw new Error("The parameter 'phoneNumberId' cannot be null.");
+        else if (phoneNumberId !== undefined)
+            url_ += "phoneNumberId=" + encodeURIComponent("" + phoneNumberId) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "text/plain"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetByPhoneNumberId(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetByPhoneNumberId(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<WhatsAppConfiguracaoDto>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<WhatsAppConfiguracaoDto>;
+        }));
+    }
+
+    protected processGetByPhoneNumberId(response: HttpResponseBase): Observable<WhatsAppConfiguracaoDto> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = WhatsAppConfiguracaoDto.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
+    /**
+     * @param body (optional) 
+     * @return OK
+     */
+    create(body: CriarWhatsAppConfiguracaoDto | undefined): Observable<WhatsAppConfiguracaoDto> {
+        let url_ = this.baseUrl + "/api/services/app/WhatsAppConfiguracoes/Create";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json",
+                "Accept": "text/plain"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processCreate(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processCreate(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<WhatsAppConfiguracaoDto>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<WhatsAppConfiguracaoDto>;
+        }));
+    }
+
+    protected processCreate(response: HttpResponseBase): Observable<WhatsAppConfiguracaoDto> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = WhatsAppConfiguracaoDto.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
+    /**
+     * @param body (optional) 
+     * @return OK
+     */
+    update(body: AtualizarWhatsAppConfiguracaoDto | undefined): Observable<WhatsAppConfiguracaoDto> {
+        let url_ = this.baseUrl + "/api/services/app/WhatsAppConfiguracoes/Update";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json",
+                "Accept": "text/plain"
+            })
+        };
+
+        return this.http.request("put", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processUpdate(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processUpdate(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<WhatsAppConfiguracaoDto>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<WhatsAppConfiguracaoDto>;
+        }));
+    }
+
+    protected processUpdate(response: HttpResponseBase): Observable<WhatsAppConfiguracaoDto> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = WhatsAppConfiguracaoDto.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
+    /**
+     * @param id (optional) 
+     * @return OK
+     */
+    delete(id: string | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/app/WhatsAppConfiguracoes/Delete?";
+        if (id === null)
+            throw new Error("The parameter 'id' cannot be null.");
+        else if (id !== undefined)
+            url_ += "Id=" + encodeURIComponent("" + id) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+            })
+        };
+
+        return this.http.request("delete", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processDelete(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processDelete(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<void>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<void>;
+        }));
+    }
+
+    protected processDelete(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return _observableOf(null as any);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
+    /**
+     * @param body (optional) 
+     * @return OK
+     */
+    ativar(body: GuidEntityDto | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/app/WhatsAppConfiguracoes/Ativar";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json",
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processAtivar(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processAtivar(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<void>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<void>;
+        }));
+    }
+
+    protected processAtivar(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return _observableOf(null as any);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
+    /**
+     * @param body (optional) 
+     * @return OK
+     */
+    desativar(body: GuidEntityDto | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/app/WhatsAppConfiguracoes/Desativar";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json",
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processDesativar(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processDesativar(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<void>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<void>;
+        }));
+    }
+
+    protected processDesativar(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return _observableOf(null as any);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+}
+
+@Injectable()
+export class WebhooksServiceProxy {
+    private http: HttpClient;
+    private baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
+    constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl ?? "";
+    }
+
+    /**
+     * @param hub_mode (optional) 
+     * @param hub_verify_token (optional) 
+     * @param hub_challenge (optional) 
+     * @return OK
+     */
+    whatsappGet(hub_mode: string | undefined, hub_verify_token: string | undefined, hub_challenge: string | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/webhooks/whatsapp?";
+        if (hub_mode === null)
+            throw new Error("The parameter 'hub_mode' cannot be null.");
+        else if (hub_mode !== undefined)
+            url_ += "hub.mode=" + encodeURIComponent("" + hub_mode) + "&";
+        if (hub_verify_token === null)
+            throw new Error("The parameter 'hub_verify_token' cannot be null.");
+        else if (hub_verify_token !== undefined)
+            url_ += "hub.verify_token=" + encodeURIComponent("" + hub_verify_token) + "&";
+        if (hub_challenge === null)
+            throw new Error("The parameter 'hub_challenge' cannot be null.");
+        else if (hub_challenge !== undefined)
+            url_ += "hub.challenge=" + encodeURIComponent("" + hub_challenge) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processWhatsappGet(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processWhatsappGet(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<void>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<void>;
+        }));
+    }
+
+    protected processWhatsappGet(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return _observableOf(null as any);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
+    /**
+     * @return OK
+     */
+    whatsappPost(): Observable<void> {
+        let url_ = this.baseUrl + "/api/webhooks/whatsapp";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processWhatsappPost(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processWhatsappPost(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<void>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<void>;
+        }));
+    }
+
+    protected processWhatsappPost(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return _observableOf(null as any);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+}
+
+@Injectable()
+export class WhatsAppWebhookServiceProxy {
+    private http: HttpClient;
+    private baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
+    constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl ?? "";
+    }
+
+    /**
+     * @param body (optional) 
+     * @return OK
+     */
+    processWebhook(body: ProcessarWebhookDto | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/app/WhatsAppWebhook/ProcessWebhook";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json",
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processProcessWebhook(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processProcessWebhook(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<void>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<void>;
+        }));
+    }
+
+    protected processProcessWebhook(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return _observableOf(null as any);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+}
+
 export class AlterarStatusOportunidadeDto implements IAlterarStatusOportunidadeDto {
     oportunidadeId: string;
     statusNegociacaoId: string;
@@ -3757,6 +6166,89 @@ export class AlterarStatusOportunidadeDto implements IAlterarStatusOportunidadeD
 export interface IAlterarStatusOportunidadeDto {
     oportunidadeId: string;
     statusNegociacaoId: string;
+}
+
+export class AnaliseConversaDto implements IAnaliseConversaDto {
+    conversaId: string;
+    status: string | undefined;
+    probabilidade: number;
+    oportunidade: boolean;
+    oportunidadeDescricao: string | undefined;
+    oQueAconteceu: string | undefined;
+    proximaAcao: string | undefined;
+    sugestaoResposta: string | undefined;
+    insights: string[] | undefined;
+
+    constructor(data?: IAnaliseConversaDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.conversaId = _data["conversaId"];
+            this.status = _data["status"];
+            this.probabilidade = _data["probabilidade"];
+            this.oportunidade = _data["oportunidade"];
+            this.oportunidadeDescricao = _data["oportunidadeDescricao"];
+            this.oQueAconteceu = _data["oQueAconteceu"];
+            this.proximaAcao = _data["proximaAcao"];
+            this.sugestaoResposta = _data["sugestaoResposta"];
+            if (Array.isArray(_data["insights"])) {
+                this.insights = [] as any;
+                for (let item of _data["insights"])
+                    this.insights.push(item);
+            }
+        }
+    }
+
+    static fromJS(data: any): AnaliseConversaDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new AnaliseConversaDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["conversaId"] = this.conversaId;
+        data["status"] = this.status;
+        data["probabilidade"] = this.probabilidade;
+        data["oportunidade"] = this.oportunidade;
+        data["oportunidadeDescricao"] = this.oportunidadeDescricao;
+        data["oQueAconteceu"] = this.oQueAconteceu;
+        data["proximaAcao"] = this.proximaAcao;
+        data["sugestaoResposta"] = this.sugestaoResposta;
+        if (Array.isArray(this.insights)) {
+            data["insights"] = [];
+            for (let item of this.insights)
+                data["insights"].push(item);
+        }
+        return data;
+    }
+
+    clone(): AnaliseConversaDto {
+        const json = this.toJSON();
+        let result = new AnaliseConversaDto();
+        result.init(json);
+        return result;
+    }
+}
+
+export interface IAnaliseConversaDto {
+    conversaId: string;
+    status: string | undefined;
+    probabilidade: number;
+    oportunidade: boolean;
+    oportunidadeDescricao: string | undefined;
+    oQueAconteceu: string | undefined;
+    proximaAcao: string | undefined;
+    sugestaoResposta: string | undefined;
+    insights: string[] | undefined;
 }
 
 export class ApplicationInfoDto implements IApplicationInfoDto {
@@ -3914,6 +6406,77 @@ export class AtualizarValorOportunidadeDto implements IAtualizarValorOportunidad
 export interface IAtualizarValorOportunidadeDto {
     oportunidadeId: string;
     valorEstimado: number | undefined;
+}
+
+export class AtualizarWhatsAppConfiguracaoDto implements IAtualizarWhatsAppConfiguracaoDto {
+    id: string;
+    vendedorId: string;
+    nome: string | undefined;
+    phoneNumberId: string | undefined;
+    wabaId: string | undefined;
+    accessToken: string | undefined;
+    telefone: string | undefined;
+    ativa: boolean;
+
+    constructor(data?: IAtualizarWhatsAppConfiguracaoDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.vendedorId = _data["vendedorId"];
+            this.nome = _data["nome"];
+            this.phoneNumberId = _data["phoneNumberId"];
+            this.wabaId = _data["wabaId"];
+            this.accessToken = _data["accessToken"];
+            this.telefone = _data["telefone"];
+            this.ativa = _data["ativa"];
+        }
+    }
+
+    static fromJS(data: any): AtualizarWhatsAppConfiguracaoDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new AtualizarWhatsAppConfiguracaoDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["vendedorId"] = this.vendedorId;
+        data["nome"] = this.nome;
+        data["phoneNumberId"] = this.phoneNumberId;
+        data["wabaId"] = this.wabaId;
+        data["accessToken"] = this.accessToken;
+        data["telefone"] = this.telefone;
+        data["ativa"] = this.ativa;
+        return data;
+    }
+
+    clone(): AtualizarWhatsAppConfiguracaoDto {
+        const json = this.toJSON();
+        let result = new AtualizarWhatsAppConfiguracaoDto();
+        result.init(json);
+        return result;
+    }
+}
+
+export interface IAtualizarWhatsAppConfiguracaoDto {
+    id: string;
+    vendedorId: string;
+    nome: string | undefined;
+    phoneNumberId: string | undefined;
+    wabaId: string | undefined;
+    accessToken: string | undefined;
+    telefone: string | undefined;
+    ativa: boolean;
 }
 
 export class AuthenticateModel implements IAuthenticateModel {
@@ -4278,6 +6841,290 @@ export class ClienteDtoPagedResultDto implements IClienteDtoPagedResultDto {
 
 export interface IClienteDtoPagedResultDto {
     items: ClienteDto[] | undefined;
+    totalCount: number;
+}
+
+export class ConversaDto implements IConversaDto {
+    id: string;
+    clienteId: string;
+    clienteNome: string | undefined;
+    vendedorId: string | undefined;
+    vendedorNome: string | undefined;
+    telefone: string | undefined;
+    canal: string | undefined;
+    identificadorExterno: string | undefined;
+    ultimaMensagemEm: moment.Moment | undefined;
+    ultimaMensagemCliente: moment.Moment | undefined;
+    dentroJanela24h: boolean;
+    limiteJanela24h: moment.Moment | undefined;
+    ativa: boolean;
+    quantidadeMensagens: number;
+    ultimaMensagem: string | undefined;
+
+    constructor(data?: IConversaDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.clienteId = _data["clienteId"];
+            this.clienteNome = _data["clienteNome"];
+            this.vendedorId = _data["vendedorId"];
+            this.vendedorNome = _data["vendedorNome"];
+            this.telefone = _data["telefone"];
+            this.canal = _data["canal"];
+            this.identificadorExterno = _data["identificadorExterno"];
+            this.ultimaMensagemEm = _data["ultimaMensagemEm"] ? moment(_data["ultimaMensagemEm"].toString()) : <any>undefined;
+            this.ultimaMensagemCliente = _data["ultimaMensagemCliente"] ? moment(_data["ultimaMensagemCliente"].toString()) : <any>undefined;
+            this.dentroJanela24h = _data["dentroJanela24h"];
+            this.limiteJanela24h = _data["limiteJanela24h"] ? moment(_data["limiteJanela24h"].toString()) : <any>undefined;
+            this.ativa = _data["ativa"];
+            this.quantidadeMensagens = _data["quantidadeMensagens"];
+            this.ultimaMensagem = _data["ultimaMensagem"];
+        }
+    }
+
+    static fromJS(data: any): ConversaDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new ConversaDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["clienteId"] = this.clienteId;
+        data["clienteNome"] = this.clienteNome;
+        data["vendedorId"] = this.vendedorId;
+        data["vendedorNome"] = this.vendedorNome;
+        data["telefone"] = this.telefone;
+        data["canal"] = this.canal;
+        data["identificadorExterno"] = this.identificadorExterno;
+        data["ultimaMensagemEm"] = this.ultimaMensagemEm ? this.ultimaMensagemEm.toISOString() : <any>undefined;
+        data["ultimaMensagemCliente"] = this.ultimaMensagemCliente ? this.ultimaMensagemCliente.toISOString() : <any>undefined;
+        data["dentroJanela24h"] = this.dentroJanela24h;
+        data["limiteJanela24h"] = this.limiteJanela24h ? this.limiteJanela24h.toISOString() : <any>undefined;
+        data["ativa"] = this.ativa;
+        data["quantidadeMensagens"] = this.quantidadeMensagens;
+        data["ultimaMensagem"] = this.ultimaMensagem;
+        return data;
+    }
+
+    clone(): ConversaDto {
+        const json = this.toJSON();
+        let result = new ConversaDto();
+        result.init(json);
+        return result;
+    }
+}
+
+export interface IConversaDto {
+    id: string;
+    clienteId: string;
+    clienteNome: string | undefined;
+    vendedorId: string | undefined;
+    vendedorNome: string | undefined;
+    telefone: string | undefined;
+    canal: string | undefined;
+    identificadorExterno: string | undefined;
+    ultimaMensagemEm: moment.Moment | undefined;
+    ultimaMensagemCliente: moment.Moment | undefined;
+    dentroJanela24h: boolean;
+    limiteJanela24h: moment.Moment | undefined;
+    ativa: boolean;
+    quantidadeMensagens: number;
+    ultimaMensagem: string | undefined;
+}
+
+export class ConversaDtoPagedResultDto implements IConversaDtoPagedResultDto {
+    items: ConversaDto[] | undefined;
+    totalCount: number;
+
+    constructor(data?: IConversaDtoPagedResultDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            if (Array.isArray(_data["items"])) {
+                this.items = [] as any;
+                for (let item of _data["items"])
+                    this.items.push(ConversaDto.fromJS(item));
+            }
+            this.totalCount = _data["totalCount"];
+        }
+    }
+
+    static fromJS(data: any): ConversaDtoPagedResultDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new ConversaDtoPagedResultDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        if (Array.isArray(this.items)) {
+            data["items"] = [];
+            for (let item of this.items)
+                data["items"].push(item.toJSON());
+        }
+        data["totalCount"] = this.totalCount;
+        return data;
+    }
+
+    clone(): ConversaDtoPagedResultDto {
+        const json = this.toJSON();
+        let result = new ConversaDtoPagedResultDto();
+        result.init(json);
+        return result;
+    }
+}
+
+export interface IConversaDtoPagedResultDto {
+    items: ConversaDto[] | undefined;
+    totalCount: number;
+}
+
+export class ConversaResumoDto implements IConversaResumoDto {
+    id: string;
+    clienteId: string;
+    clienteNome: string | undefined;
+    telefone: string | undefined;
+    ultimaMensagem: string | undefined;
+    ultimaMensagemEm: moment.Moment | undefined;
+    ativa: boolean;
+    ultimaMensagemDoCliente: boolean;
+    quantidadeNaoVisualizadas: number;
+
+    constructor(data?: IConversaResumoDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.clienteId = _data["clienteId"];
+            this.clienteNome = _data["clienteNome"];
+            this.telefone = _data["telefone"];
+            this.ultimaMensagem = _data["ultimaMensagem"];
+            this.ultimaMensagemEm = _data["ultimaMensagemEm"] ? moment(_data["ultimaMensagemEm"].toString()) : <any>undefined;
+            this.ativa = _data["ativa"];
+            this.ultimaMensagemDoCliente = _data["ultimaMensagemDoCliente"];
+            this.quantidadeNaoVisualizadas = _data["quantidadeNaoVisualizadas"];
+        }
+    }
+
+    static fromJS(data: any): ConversaResumoDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new ConversaResumoDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["clienteId"] = this.clienteId;
+        data["clienteNome"] = this.clienteNome;
+        data["telefone"] = this.telefone;
+        data["ultimaMensagem"] = this.ultimaMensagem;
+        data["ultimaMensagemEm"] = this.ultimaMensagemEm ? this.ultimaMensagemEm.toISOString() : <any>undefined;
+        data["ativa"] = this.ativa;
+        data["ultimaMensagemDoCliente"] = this.ultimaMensagemDoCliente;
+        data["quantidadeNaoVisualizadas"] = this.quantidadeNaoVisualizadas;
+        return data;
+    }
+
+    clone(): ConversaResumoDto {
+        const json = this.toJSON();
+        let result = new ConversaResumoDto();
+        result.init(json);
+        return result;
+    }
+}
+
+export interface IConversaResumoDto {
+    id: string;
+    clienteId: string;
+    clienteNome: string | undefined;
+    telefone: string | undefined;
+    ultimaMensagem: string | undefined;
+    ultimaMensagemEm: moment.Moment | undefined;
+    ativa: boolean;
+    ultimaMensagemDoCliente: boolean;
+    quantidadeNaoVisualizadas: number;
+}
+
+export class ConversaResumoDtoPagedResultDto implements IConversaResumoDtoPagedResultDto {
+    items: ConversaResumoDto[] | undefined;
+    totalCount: number;
+
+    constructor(data?: IConversaResumoDtoPagedResultDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            if (Array.isArray(_data["items"])) {
+                this.items = [] as any;
+                for (let item of _data["items"])
+                    this.items.push(ConversaResumoDto.fromJS(item));
+            }
+            this.totalCount = _data["totalCount"];
+        }
+    }
+
+    static fromJS(data: any): ConversaResumoDtoPagedResultDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new ConversaResumoDtoPagedResultDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        if (Array.isArray(this.items)) {
+            data["items"] = [];
+            for (let item of this.items)
+                data["items"].push(item.toJSON());
+        }
+        data["totalCount"] = this.totalCount;
+        return data;
+    }
+
+    clone(): ConversaResumoDtoPagedResultDto {
+        const json = this.toJSON();
+        let result = new ConversaResumoDtoPagedResultDto();
+        result.init(json);
+        return result;
+    }
+}
+
+export interface IConversaResumoDtoPagedResultDto {
+    items: ConversaResumoDto[] | undefined;
     totalCount: number;
 }
 
@@ -4734,6 +7581,605 @@ export interface ICreateVendedorDto {
     userId: number;
 }
 
+export class CriarMensagemDto implements ICriarMensagemDto {
+    vendedorId: string | undefined;
+    conversaId: string;
+    identificadorExterno: string | undefined;
+    direcao: string | undefined;
+    tipo: string | undefined;
+    conteudo: string | undefined;
+    remetente: string | undefined;
+    destinatario: string | undefined;
+    dataHora: moment.Moment;
+
+    constructor(data?: ICriarMensagemDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.vendedorId = _data["vendedorId"];
+            this.conversaId = _data["conversaId"];
+            this.identificadorExterno = _data["identificadorExterno"];
+            this.direcao = _data["direcao"];
+            this.tipo = _data["tipo"];
+            this.conteudo = _data["conteudo"];
+            this.remetente = _data["remetente"];
+            this.destinatario = _data["destinatario"];
+            this.dataHora = _data["dataHora"] ? moment(_data["dataHora"].toString()) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): CriarMensagemDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new CriarMensagemDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["vendedorId"] = this.vendedorId;
+        data["conversaId"] = this.conversaId;
+        data["identificadorExterno"] = this.identificadorExterno;
+        data["direcao"] = this.direcao;
+        data["tipo"] = this.tipo;
+        data["conteudo"] = this.conteudo;
+        data["remetente"] = this.remetente;
+        data["destinatario"] = this.destinatario;
+        data["dataHora"] = this.dataHora ? this.dataHora.toISOString() : <any>undefined;
+        return data;
+    }
+
+    clone(): CriarMensagemDto {
+        const json = this.toJSON();
+        let result = new CriarMensagemDto();
+        result.init(json);
+        return result;
+    }
+}
+
+export interface ICriarMensagemDto {
+    vendedorId: string | undefined;
+    conversaId: string;
+    identificadorExterno: string | undefined;
+    direcao: string | undefined;
+    tipo: string | undefined;
+    conteudo: string | undefined;
+    remetente: string | undefined;
+    destinatario: string | undefined;
+    dataHora: moment.Moment;
+}
+
+export class CriarOuObterConversaDto implements ICriarOuObterConversaDto {
+    clienteId: string;
+    vendedorId: string | undefined;
+    telefone: string | undefined;
+    canal: string | undefined;
+    identificadorExterno: string | undefined;
+
+    constructor(data?: ICriarOuObterConversaDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.clienteId = _data["clienteId"];
+            this.vendedorId = _data["vendedorId"];
+            this.telefone = _data["telefone"];
+            this.canal = _data["canal"];
+            this.identificadorExterno = _data["identificadorExterno"];
+        }
+    }
+
+    static fromJS(data: any): CriarOuObterConversaDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new CriarOuObterConversaDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["clienteId"] = this.clienteId;
+        data["vendedorId"] = this.vendedorId;
+        data["telefone"] = this.telefone;
+        data["canal"] = this.canal;
+        data["identificadorExterno"] = this.identificadorExterno;
+        return data;
+    }
+
+    clone(): CriarOuObterConversaDto {
+        const json = this.toJSON();
+        let result = new CriarOuObterConversaDto();
+        result.init(json);
+        return result;
+    }
+}
+
+export interface ICriarOuObterConversaDto {
+    clienteId: string;
+    vendedorId: string | undefined;
+    telefone: string | undefined;
+    canal: string | undefined;
+    identificadorExterno: string | undefined;
+}
+
+export class CriarPromocaoDto implements ICriarPromocaoDto {
+    nome: string | undefined;
+    templateId: string | undefined;
+    nomeProduto: string | undefined;
+    valorEstimadoProduto: number | undefined;
+    clienteIds: string[] | undefined;
+
+    constructor(data?: ICriarPromocaoDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.nome = _data["nome"];
+            this.templateId = _data["templateId"];
+            this.nomeProduto = _data["nomeProduto"];
+            this.valorEstimadoProduto = _data["valorEstimadoProduto"];
+            if (Array.isArray(_data["clienteIds"])) {
+                this.clienteIds = [] as any;
+                for (let item of _data["clienteIds"])
+                    this.clienteIds.push(item);
+            }
+        }
+    }
+
+    static fromJS(data: any): CriarPromocaoDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new CriarPromocaoDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["nome"] = this.nome;
+        data["templateId"] = this.templateId;
+        data["nomeProduto"] = this.nomeProduto;
+        data["valorEstimadoProduto"] = this.valorEstimadoProduto;
+        if (Array.isArray(this.clienteIds)) {
+            data["clienteIds"] = [];
+            for (let item of this.clienteIds)
+                data["clienteIds"].push(item);
+        }
+        return data;
+    }
+
+    clone(): CriarPromocaoDto {
+        const json = this.toJSON();
+        let result = new CriarPromocaoDto();
+        result.init(json);
+        return result;
+    }
+}
+
+export interface ICriarPromocaoDto {
+    nome: string | undefined;
+    templateId: string | undefined;
+    nomeProduto: string | undefined;
+    valorEstimadoProduto: number | undefined;
+    clienteIds: string[] | undefined;
+}
+
+export class CriarWhatsAppConfiguracaoDto implements ICriarWhatsAppConfiguracaoDto {
+    vendedorId: string;
+    nome: string | undefined;
+    phoneNumberId: string | undefined;
+    wabaId: string | undefined;
+    accessToken: string | undefined;
+    telefone: string | undefined;
+
+    constructor(data?: ICriarWhatsAppConfiguracaoDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.vendedorId = _data["vendedorId"];
+            this.nome = _data["nome"];
+            this.phoneNumberId = _data["phoneNumberId"];
+            this.wabaId = _data["wabaId"];
+            this.accessToken = _data["accessToken"];
+            this.telefone = _data["telefone"];
+        }
+    }
+
+    static fromJS(data: any): CriarWhatsAppConfiguracaoDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new CriarWhatsAppConfiguracaoDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["vendedorId"] = this.vendedorId;
+        data["nome"] = this.nome;
+        data["phoneNumberId"] = this.phoneNumberId;
+        data["wabaId"] = this.wabaId;
+        data["accessToken"] = this.accessToken;
+        data["telefone"] = this.telefone;
+        return data;
+    }
+
+    clone(): CriarWhatsAppConfiguracaoDto {
+        const json = this.toJSON();
+        let result = new CriarWhatsAppConfiguracaoDto();
+        result.init(json);
+        return result;
+    }
+}
+
+export interface ICriarWhatsAppConfiguracaoDto {
+    vendedorId: string;
+    nome: string | undefined;
+    phoneNumberId: string | undefined;
+    wabaId: string | undefined;
+    accessToken: string | undefined;
+    telefone: string | undefined;
+}
+
+export class DashboardDto implements IDashboardDto {
+    valorPipeline: number;
+    quantidadeOportunidades: number;
+    quantidadeConversasPendentes: number;
+    quantidadeOportunidadesPromocao: number;
+    funil: DashboardFunilDto[] | undefined;
+    clientesAguardandoRetorno: number;
+    oportunidadesSemInteracao: number;
+    oportunidadesSemProximaAcao: number;
+    valorGeradoPorPromocoes: number;
+    quantidadeOportunidadesPromocaoFechadas: number;
+    equipe: DashboardVendedorDto[] | undefined;
+
+    constructor(data?: IDashboardDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.valorPipeline = _data["valorPipeline"];
+            this.quantidadeOportunidades = _data["quantidadeOportunidades"];
+            this.quantidadeConversasPendentes = _data["quantidadeConversasPendentes"];
+            this.quantidadeOportunidadesPromocao = _data["quantidadeOportunidadesPromocao"];
+            if (Array.isArray(_data["funil"])) {
+                this.funil = [] as any;
+                for (let item of _data["funil"])
+                    this.funil.push(DashboardFunilDto.fromJS(item));
+            }
+            this.clientesAguardandoRetorno = _data["clientesAguardandoRetorno"];
+            this.oportunidadesSemInteracao = _data["oportunidadesSemInteracao"];
+            this.oportunidadesSemProximaAcao = _data["oportunidadesSemProximaAcao"];
+            this.valorGeradoPorPromocoes = _data["valorGeradoPorPromocoes"];
+            this.quantidadeOportunidadesPromocaoFechadas = _data["quantidadeOportunidadesPromocaoFechadas"];
+            if (Array.isArray(_data["equipe"])) {
+                this.equipe = [] as any;
+                for (let item of _data["equipe"])
+                    this.equipe.push(DashboardVendedorDto.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): DashboardDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new DashboardDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["valorPipeline"] = this.valorPipeline;
+        data["quantidadeOportunidades"] = this.quantidadeOportunidades;
+        data["quantidadeConversasPendentes"] = this.quantidadeConversasPendentes;
+        data["quantidadeOportunidadesPromocao"] = this.quantidadeOportunidadesPromocao;
+        if (Array.isArray(this.funil)) {
+            data["funil"] = [];
+            for (let item of this.funil)
+                data["funil"].push(item.toJSON());
+        }
+        data["clientesAguardandoRetorno"] = this.clientesAguardandoRetorno;
+        data["oportunidadesSemInteracao"] = this.oportunidadesSemInteracao;
+        data["oportunidadesSemProximaAcao"] = this.oportunidadesSemProximaAcao;
+        data["valorGeradoPorPromocoes"] = this.valorGeradoPorPromocoes;
+        data["quantidadeOportunidadesPromocaoFechadas"] = this.quantidadeOportunidadesPromocaoFechadas;
+        if (Array.isArray(this.equipe)) {
+            data["equipe"] = [];
+            for (let item of this.equipe)
+                data["equipe"].push(item.toJSON());
+        }
+        return data;
+    }
+
+    clone(): DashboardDto {
+        const json = this.toJSON();
+        let result = new DashboardDto();
+        result.init(json);
+        return result;
+    }
+}
+
+export interface IDashboardDto {
+    valorPipeline: number;
+    quantidadeOportunidades: number;
+    quantidadeConversasPendentes: number;
+    quantidadeOportunidadesPromocao: number;
+    funil: DashboardFunilDto[] | undefined;
+    clientesAguardandoRetorno: number;
+    oportunidadesSemInteracao: number;
+    oportunidadesSemProximaAcao: number;
+    valorGeradoPorPromocoes: number;
+    quantidadeOportunidadesPromocaoFechadas: number;
+    equipe: DashboardVendedorDto[] | undefined;
+}
+
+export class DashboardFunilDto implements IDashboardFunilDto {
+    statusId: string;
+    statusNome: string | undefined;
+    quantidade: number;
+    valor: number;
+    ordem: number;
+    ganho: boolean;
+    perdido: boolean;
+
+    constructor(data?: IDashboardFunilDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.statusId = _data["statusId"];
+            this.statusNome = _data["statusNome"];
+            this.quantidade = _data["quantidade"];
+            this.valor = _data["valor"];
+            this.ordem = _data["ordem"];
+            this.ganho = _data["ganho"];
+            this.perdido = _data["perdido"];
+        }
+    }
+
+    static fromJS(data: any): DashboardFunilDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new DashboardFunilDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["statusId"] = this.statusId;
+        data["statusNome"] = this.statusNome;
+        data["quantidade"] = this.quantidade;
+        data["valor"] = this.valor;
+        data["ordem"] = this.ordem;
+        data["ganho"] = this.ganho;
+        data["perdido"] = this.perdido;
+        return data;
+    }
+
+    clone(): DashboardFunilDto {
+        const json = this.toJSON();
+        let result = new DashboardFunilDto();
+        result.init(json);
+        return result;
+    }
+}
+
+export interface IDashboardFunilDto {
+    statusId: string;
+    statusNome: string | undefined;
+    quantidade: number;
+    valor: number;
+    ordem: number;
+    ganho: boolean;
+    perdido: boolean;
+}
+
+export class DashboardVendedorDto implements IDashboardVendedorDto {
+    vendedorId: string;
+    vendedorNome: string | undefined;
+    quantidadeOportunidades: number;
+    valorPipeline: number;
+    quantidadeFechadas: number;
+
+    constructor(data?: IDashboardVendedorDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.vendedorId = _data["vendedorId"];
+            this.vendedorNome = _data["vendedorNome"];
+            this.quantidadeOportunidades = _data["quantidadeOportunidades"];
+            this.valorPipeline = _data["valorPipeline"];
+            this.quantidadeFechadas = _data["quantidadeFechadas"];
+        }
+    }
+
+    static fromJS(data: any): DashboardVendedorDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new DashboardVendedorDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["vendedorId"] = this.vendedorId;
+        data["vendedorNome"] = this.vendedorNome;
+        data["quantidadeOportunidades"] = this.quantidadeOportunidades;
+        data["valorPipeline"] = this.valorPipeline;
+        data["quantidadeFechadas"] = this.quantidadeFechadas;
+        return data;
+    }
+
+    clone(): DashboardVendedorDto {
+        const json = this.toJSON();
+        let result = new DashboardVendedorDto();
+        result.init(json);
+        return result;
+    }
+}
+
+export interface IDashboardVendedorDto {
+    vendedorId: string;
+    vendedorNome: string | undefined;
+    quantidadeOportunidades: number;
+    valorPipeline: number;
+    quantidadeFechadas: number;
+}
+
+export class EnviarMensagemWhatsAppDto implements IEnviarMensagemWhatsAppDto {
+    conversaId: string;
+    mensagem: string | undefined;
+
+    constructor(data?: IEnviarMensagemWhatsAppDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.conversaId = _data["conversaId"];
+            this.mensagem = _data["mensagem"];
+        }
+    }
+
+    static fromJS(data: any): EnviarMensagemWhatsAppDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new EnviarMensagemWhatsAppDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["conversaId"] = this.conversaId;
+        data["mensagem"] = this.mensagem;
+        return data;
+    }
+
+    clone(): EnviarMensagemWhatsAppDto {
+        const json = this.toJSON();
+        let result = new EnviarMensagemWhatsAppDto();
+        result.init(json);
+        return result;
+    }
+}
+
+export interface IEnviarMensagemWhatsAppDto {
+    conversaId: string;
+    mensagem: string | undefined;
+}
+
+export class EnviarTemplateWhatsAppDto implements IEnviarTemplateWhatsAppDto {
+    conversaId: string;
+    nomeTemplate: string | undefined;
+    idioma: string | undefined;
+    parametros: string[] | undefined;
+
+    constructor(data?: IEnviarTemplateWhatsAppDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.conversaId = _data["conversaId"];
+            this.nomeTemplate = _data["nomeTemplate"];
+            this.idioma = _data["idioma"];
+            if (Array.isArray(_data["parametros"])) {
+                this.parametros = [] as any;
+                for (let item of _data["parametros"])
+                    this.parametros.push(item);
+            }
+        }
+    }
+
+    static fromJS(data: any): EnviarTemplateWhatsAppDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new EnviarTemplateWhatsAppDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["conversaId"] = this.conversaId;
+        data["nomeTemplate"] = this.nomeTemplate;
+        data["idioma"] = this.idioma;
+        if (Array.isArray(this.parametros)) {
+            data["parametros"] = [];
+            for (let item of this.parametros)
+                data["parametros"].push(item);
+        }
+        return data;
+    }
+
+    clone(): EnviarTemplateWhatsAppDto {
+        const json = this.toJSON();
+        let result = new EnviarTemplateWhatsAppDto();
+        result.init(json);
+        return result;
+    }
+}
+
+export interface IEnviarTemplateWhatsAppDto {
+    conversaId: string;
+    nomeTemplate: string | undefined;
+    idioma: string | undefined;
+    parametros: string[] | undefined;
+}
+
 export class FlatPermissionDto implements IFlatPermissionDto {
     name: string | undefined;
     displayName: string | undefined;
@@ -5126,6 +8572,156 @@ export interface IMarcarOportunidadePerdidaDto {
     motivo: string | undefined;
 }
 
+export class MensagemDto implements IMensagemDto {
+    id: string;
+    conversaId: string;
+    vendedorId: string | undefined;
+    vendedorNome: string | undefined;
+    identificadorExterno: string | undefined;
+    direcao: string | undefined;
+    tipo: string | undefined;
+    conteudo: string | undefined;
+    remetente: string | undefined;
+    destinatario: string | undefined;
+    dataHora: moment.Moment;
+    processadaPorIA: boolean;
+    visualizada: boolean;
+    dataHoraVisualizacao: moment.Moment | undefined;
+
+    constructor(data?: IMensagemDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.conversaId = _data["conversaId"];
+            this.vendedorId = _data["vendedorId"];
+            this.vendedorNome = _data["vendedorNome"];
+            this.identificadorExterno = _data["identificadorExterno"];
+            this.direcao = _data["direcao"];
+            this.tipo = _data["tipo"];
+            this.conteudo = _data["conteudo"];
+            this.remetente = _data["remetente"];
+            this.destinatario = _data["destinatario"];
+            this.dataHora = _data["dataHora"] ? moment(_data["dataHora"].toString()) : <any>undefined;
+            this.processadaPorIA = _data["processadaPorIA"];
+            this.visualizada = _data["visualizada"];
+            this.dataHoraVisualizacao = _data["dataHoraVisualizacao"] ? moment(_data["dataHoraVisualizacao"].toString()) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): MensagemDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new MensagemDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["conversaId"] = this.conversaId;
+        data["vendedorId"] = this.vendedorId;
+        data["vendedorNome"] = this.vendedorNome;
+        data["identificadorExterno"] = this.identificadorExterno;
+        data["direcao"] = this.direcao;
+        data["tipo"] = this.tipo;
+        data["conteudo"] = this.conteudo;
+        data["remetente"] = this.remetente;
+        data["destinatario"] = this.destinatario;
+        data["dataHora"] = this.dataHora ? this.dataHora.toISOString() : <any>undefined;
+        data["processadaPorIA"] = this.processadaPorIA;
+        data["visualizada"] = this.visualizada;
+        data["dataHoraVisualizacao"] = this.dataHoraVisualizacao ? this.dataHoraVisualizacao.toISOString() : <any>undefined;
+        return data;
+    }
+
+    clone(): MensagemDto {
+        const json = this.toJSON();
+        let result = new MensagemDto();
+        result.init(json);
+        return result;
+    }
+}
+
+export interface IMensagemDto {
+    id: string;
+    conversaId: string;
+    vendedorId: string | undefined;
+    vendedorNome: string | undefined;
+    identificadorExterno: string | undefined;
+    direcao: string | undefined;
+    tipo: string | undefined;
+    conteudo: string | undefined;
+    remetente: string | undefined;
+    destinatario: string | undefined;
+    dataHora: moment.Moment;
+    processadaPorIA: boolean;
+    visualizada: boolean;
+    dataHoraVisualizacao: moment.Moment | undefined;
+}
+
+export class MensagemDtoPagedResultDto implements IMensagemDtoPagedResultDto {
+    items: MensagemDto[] | undefined;
+    totalCount: number;
+
+    constructor(data?: IMensagemDtoPagedResultDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            if (Array.isArray(_data["items"])) {
+                this.items = [] as any;
+                for (let item of _data["items"])
+                    this.items.push(MensagemDto.fromJS(item));
+            }
+            this.totalCount = _data["totalCount"];
+        }
+    }
+
+    static fromJS(data: any): MensagemDtoPagedResultDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new MensagemDtoPagedResultDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        if (Array.isArray(this.items)) {
+            data["items"] = [];
+            for (let item of this.items)
+                data["items"].push(item.toJSON());
+        }
+        data["totalCount"] = this.totalCount;
+        return data;
+    }
+
+    clone(): MensagemDtoPagedResultDto {
+        const json = this.toJSON();
+        let result = new MensagemDtoPagedResultDto();
+        result.init(json);
+        return result;
+    }
+}
+
+export interface IMensagemDtoPagedResultDto {
+    items: MensagemDto[] | undefined;
+    totalCount: number;
+}
+
 export class OportunidadeDto implements IOportunidadeDto {
     id: string;
     clienteId: string;
@@ -5143,6 +8739,8 @@ export class OportunidadeDto implements IOportunidadeDto {
     quantidadeConversas: number;
     ultimaAnaliseIA: moment.Moment | undefined;
     proximaAcaoIA: string | undefined;
+    promocaoId: string | undefined;
+    veioDePromocao: boolean;
 
     constructor(data?: IOportunidadeDto) {
         if (data) {
@@ -5171,6 +8769,8 @@ export class OportunidadeDto implements IOportunidadeDto {
             this.quantidadeConversas = _data["quantidadeConversas"];
             this.ultimaAnaliseIA = _data["ultimaAnaliseIA"] ? moment(_data["ultimaAnaliseIA"].toString()) : <any>undefined;
             this.proximaAcaoIA = _data["proximaAcaoIA"];
+            this.promocaoId = _data["promocaoId"];
+            this.veioDePromocao = _data["veioDePromocao"];
         }
     }
 
@@ -5199,6 +8799,8 @@ export class OportunidadeDto implements IOportunidadeDto {
         data["quantidadeConversas"] = this.quantidadeConversas;
         data["ultimaAnaliseIA"] = this.ultimaAnaliseIA ? this.ultimaAnaliseIA.toISOString() : <any>undefined;
         data["proximaAcaoIA"] = this.proximaAcaoIA;
+        data["promocaoId"] = this.promocaoId;
+        data["veioDePromocao"] = this.veioDePromocao;
         return data;
     }
 
@@ -5227,6 +8829,8 @@ export interface IOportunidadeDto {
     quantidadeConversas: number;
     ultimaAnaliseIA: moment.Moment | undefined;
     proximaAcaoIA: string | undefined;
+    promocaoId: string | undefined;
+    veioDePromocao: boolean;
 }
 
 export class OportunidadeDtoPagedResultDto implements IOportunidadeDtoPagedResultDto {
@@ -5467,6 +9071,140 @@ export class PermissionDtoListResultDto implements IPermissionDtoListResultDto {
 
 export interface IPermissionDtoListResultDto {
     items: PermissionDto[] | undefined;
+}
+
+export class ProcessarWebhookDto implements IProcessarWebhookDto {
+    payload: string | undefined;
+
+    constructor(data?: IProcessarWebhookDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.payload = _data["payload"];
+        }
+    }
+
+    static fromJS(data: any): ProcessarWebhookDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new ProcessarWebhookDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["payload"] = this.payload;
+        return data;
+    }
+
+    clone(): ProcessarWebhookDto {
+        const json = this.toJSON();
+        let result = new ProcessarWebhookDto();
+        result.init(json);
+        return result;
+    }
+}
+
+export interface IProcessarWebhookDto {
+    payload: string | undefined;
+}
+
+export class PromocaoDto implements IPromocaoDto {
+    id: string;
+    nome: string | undefined;
+    templateId: string | undefined;
+    nomeProduto: string | undefined;
+    dataEnvio: moment.Moment | undefined;
+    quantidadeDestinatarios: number;
+    quantidadeOportunidades: number;
+    quantidadeProspecao: number;
+    quantidadeQualificacao: number;
+    quantidadeProposta: number;
+    quantidadeNegociacao: number;
+    quantidadeFechadas: number;
+    quantidadePerdidas: number;
+
+    constructor(data?: IPromocaoDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.nome = _data["nome"];
+            this.templateId = _data["templateId"];
+            this.nomeProduto = _data["nomeProduto"];
+            this.dataEnvio = _data["dataEnvio"] ? moment(_data["dataEnvio"].toString()) : <any>undefined;
+            this.quantidadeDestinatarios = _data["quantidadeDestinatarios"];
+            this.quantidadeOportunidades = _data["quantidadeOportunidades"];
+            this.quantidadeProspecao = _data["quantidadeProspecao"];
+            this.quantidadeQualificacao = _data["quantidadeQualificacao"];
+            this.quantidadeProposta = _data["quantidadeProposta"];
+            this.quantidadeNegociacao = _data["quantidadeNegociacao"];
+            this.quantidadeFechadas = _data["quantidadeFechadas"];
+            this.quantidadePerdidas = _data["quantidadePerdidas"];
+        }
+    }
+
+    static fromJS(data: any): PromocaoDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new PromocaoDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["nome"] = this.nome;
+        data["templateId"] = this.templateId;
+        data["nomeProduto"] = this.nomeProduto;
+        data["dataEnvio"] = this.dataEnvio ? this.dataEnvio.toISOString() : <any>undefined;
+        data["quantidadeDestinatarios"] = this.quantidadeDestinatarios;
+        data["quantidadeOportunidades"] = this.quantidadeOportunidades;
+        data["quantidadeProspecao"] = this.quantidadeProspecao;
+        data["quantidadeQualificacao"] = this.quantidadeQualificacao;
+        data["quantidadeProposta"] = this.quantidadeProposta;
+        data["quantidadeNegociacao"] = this.quantidadeNegociacao;
+        data["quantidadeFechadas"] = this.quantidadeFechadas;
+        data["quantidadePerdidas"] = this.quantidadePerdidas;
+        return data;
+    }
+
+    clone(): PromocaoDto {
+        const json = this.toJSON();
+        let result = new PromocaoDto();
+        result.init(json);
+        return result;
+    }
+}
+
+export interface IPromocaoDto {
+    id: string;
+    nome: string | undefined;
+    templateId: string | undefined;
+    nomeProduto: string | undefined;
+    dataEnvio: moment.Moment | undefined;
+    quantidadeDestinatarios: number;
+    quantidadeOportunidades: number;
+    quantidadeProspecao: number;
+    quantidadeQualificacao: number;
+    quantidadeProposta: number;
+    quantidadeNegociacao: number;
+    quantidadeFechadas: number;
+    quantidadePerdidas: number;
 }
 
 export class RegisterInput implements IRegisterInput {
@@ -5974,6 +9712,77 @@ export class RoleListDtoListResultDto implements IRoleListDtoListResultDto {
 
 export interface IRoleListDtoListResultDto {
     items: RoleListDto[] | undefined;
+}
+
+export class SalvarMensagemWhatsAppDto implements ISalvarMensagemWhatsAppDto {
+    conversaId: string;
+    identificadorExterno: string | undefined;
+    tipo: string | undefined;
+    conteudo: string | undefined;
+    remetente: string | undefined;
+    destinatario: string | undefined;
+    dataHora: moment.Moment;
+    direcao: string | undefined;
+
+    constructor(data?: ISalvarMensagemWhatsAppDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.conversaId = _data["conversaId"];
+            this.identificadorExterno = _data["identificadorExterno"];
+            this.tipo = _data["tipo"];
+            this.conteudo = _data["conteudo"];
+            this.remetente = _data["remetente"];
+            this.destinatario = _data["destinatario"];
+            this.dataHora = _data["dataHora"] ? moment(_data["dataHora"].toString()) : <any>undefined;
+            this.direcao = _data["direcao"];
+        }
+    }
+
+    static fromJS(data: any): SalvarMensagemWhatsAppDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new SalvarMensagemWhatsAppDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["conversaId"] = this.conversaId;
+        data["identificadorExterno"] = this.identificadorExterno;
+        data["tipo"] = this.tipo;
+        data["conteudo"] = this.conteudo;
+        data["remetente"] = this.remetente;
+        data["destinatario"] = this.destinatario;
+        data["dataHora"] = this.dataHora ? this.dataHora.toISOString() : <any>undefined;
+        data["direcao"] = this.direcao;
+        return data;
+    }
+
+    clone(): SalvarMensagemWhatsAppDto {
+        const json = this.toJSON();
+        let result = new SalvarMensagemWhatsAppDto();
+        result.init(json);
+        return result;
+    }
+}
+
+export interface ISalvarMensagemWhatsAppDto {
+    conversaId: string;
+    identificadorExterno: string | undefined;
+    tipo: string | undefined;
+    conteudo: string | undefined;
+    remetente: string | undefined;
+    destinatario: string | undefined;
+    dataHora: moment.Moment;
+    direcao: string | undefined;
 }
 
 export class SimpleLookupDto implements ISimpleLookupDto {
@@ -6850,6 +10659,203 @@ export class VendedorDtoPagedResultDto implements IVendedorDtoPagedResultDto {
 export interface IVendedorDtoPagedResultDto {
     items: VendedorDto[] | undefined;
     totalCount: number;
+}
+
+export class VincularVendedorConversaDto implements IVincularVendedorConversaDto {
+    conversaId: string;
+    vendedorId: string | undefined;
+
+    constructor(data?: IVincularVendedorConversaDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.conversaId = _data["conversaId"];
+            this.vendedorId = _data["vendedorId"];
+        }
+    }
+
+    static fromJS(data: any): VincularVendedorConversaDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new VincularVendedorConversaDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["conversaId"] = this.conversaId;
+        data["vendedorId"] = this.vendedorId;
+        return data;
+    }
+
+    clone(): VincularVendedorConversaDto {
+        const json = this.toJSON();
+        let result = new VincularVendedorConversaDto();
+        result.init(json);
+        return result;
+    }
+}
+
+export interface IVincularVendedorConversaDto {
+    conversaId: string;
+    vendedorId: string | undefined;
+}
+
+export class WhatsAppConfiguracaoDto implements IWhatsAppConfiguracaoDto {
+    id: string;
+    vendedorId: string;
+    vendedorNome: string | undefined;
+    nome: string | undefined;
+    phoneNumberId: string | undefined;
+    wabaId: string | undefined;
+    telefone: string | undefined;
+    ativa: boolean;
+    ultimaSincronizacaoEm: moment.Moment | undefined;
+
+    constructor(data?: IWhatsAppConfiguracaoDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.vendedorId = _data["vendedorId"];
+            this.vendedorNome = _data["vendedorNome"];
+            this.nome = _data["nome"];
+            this.phoneNumberId = _data["phoneNumberId"];
+            this.wabaId = _data["wabaId"];
+            this.telefone = _data["telefone"];
+            this.ativa = _data["ativa"];
+            this.ultimaSincronizacaoEm = _data["ultimaSincronizacaoEm"] ? moment(_data["ultimaSincronizacaoEm"].toString()) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): WhatsAppConfiguracaoDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new WhatsAppConfiguracaoDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["vendedorId"] = this.vendedorId;
+        data["vendedorNome"] = this.vendedorNome;
+        data["nome"] = this.nome;
+        data["phoneNumberId"] = this.phoneNumberId;
+        data["wabaId"] = this.wabaId;
+        data["telefone"] = this.telefone;
+        data["ativa"] = this.ativa;
+        data["ultimaSincronizacaoEm"] = this.ultimaSincronizacaoEm ? this.ultimaSincronizacaoEm.toISOString() : <any>undefined;
+        return data;
+    }
+
+    clone(): WhatsAppConfiguracaoDto {
+        const json = this.toJSON();
+        let result = new WhatsAppConfiguracaoDto();
+        result.init(json);
+        return result;
+    }
+}
+
+export interface IWhatsAppConfiguracaoDto {
+    id: string;
+    vendedorId: string;
+    vendedorNome: string | undefined;
+    nome: string | undefined;
+    phoneNumberId: string | undefined;
+    wabaId: string | undefined;
+    telefone: string | undefined;
+    ativa: boolean;
+    ultimaSincronizacaoEm: moment.Moment | undefined;
+}
+
+export class WhatsAppTemplateDto implements IWhatsAppTemplateDto {
+    nome: string | undefined;
+    idioma: string | undefined;
+    categoria: string | undefined;
+    cabecalho: string | undefined;
+    corpo: string | undefined;
+    quantidadeParametros: number;
+    nomesParametros: string[] | undefined;
+
+    constructor(data?: IWhatsAppTemplateDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.nome = _data["nome"];
+            this.idioma = _data["idioma"];
+            this.categoria = _data["categoria"];
+            this.cabecalho = _data["cabecalho"];
+            this.corpo = _data["corpo"];
+            this.quantidadeParametros = _data["quantidadeParametros"];
+            if (Array.isArray(_data["nomesParametros"])) {
+                this.nomesParametros = [] as any;
+                for (let item of _data["nomesParametros"])
+                    this.nomesParametros.push(item);
+            }
+        }
+    }
+
+    static fromJS(data: any): WhatsAppTemplateDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new WhatsAppTemplateDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["nome"] = this.nome;
+        data["idioma"] = this.idioma;
+        data["categoria"] = this.categoria;
+        data["cabecalho"] = this.cabecalho;
+        data["corpo"] = this.corpo;
+        data["quantidadeParametros"] = this.quantidadeParametros;
+        if (Array.isArray(this.nomesParametros)) {
+            data["nomesParametros"] = [];
+            for (let item of this.nomesParametros)
+                data["nomesParametros"].push(item);
+        }
+        return data;
+    }
+
+    clone(): WhatsAppTemplateDto {
+        const json = this.toJSON();
+        let result = new WhatsAppTemplateDto();
+        result.init(json);
+        return result;
+    }
+}
+
+export interface IWhatsAppTemplateDto {
+    nome: string | undefined;
+    idioma: string | undefined;
+    categoria: string | undefined;
+    cabecalho: string | undefined;
+    corpo: string | undefined;
+    quantidadeParametros: number;
+    nomesParametros: string[] | undefined;
 }
 
 export class ApiException extends Error {

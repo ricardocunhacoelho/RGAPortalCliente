@@ -1,0 +1,407 @@
+<div class="nova-conversa">
+
+    <!-- Cabeçalho -->
+    <div class="nova-conversa-header">
+
+        <div>
+
+            <h3>
+                Nova conversa
+            </h3>
+
+            <p>
+                Inicie uma conversa com um cliente.
+            </p>
+
+        </div>
+
+
+        <button
+            type="button"
+            class="btn btn-sm btn-light"
+            (click)="fechar()">
+
+            <i class="fa fa-times"></i>
+
+        </button>
+
+    </div>
+
+
+    <!-- Cliente cadastrado -->
+    <div
+        class="nova-conversa-body"
+        *ngIf="!clienteNaoCadastrado">
+
+
+        <div class="form-group">
+
+            <label>
+                Cliente
+            </label>
+
+
+            <!-- Cliente selecionado -->
+            <div
+                class="cliente-selecionado"
+                *ngIf="clienteSelecionado">
+
+                <div class="cliente-selecionado-info">
+
+                    <div class="cliente-avatar">
+                        <i class="fa fa-user"></i>
+                    </div>
+
+
+                    <div>
+
+                        <div class="cliente-selecionado-nome">
+                            {{ clienteSelecionado.nome }}
+                        </div>
+
+
+                        <div
+                            class="cliente-selecionado-detalhes"
+                            *ngIf="clienteSelecionado.empresa">
+
+                            {{ clienteSelecionado.empresa }}
+
+                        </div>
+
+
+                        <div
+                            class="cliente-selecionado-detalhes"
+                            *ngIf="clienteSelecionado.telefone">
+
+                            {{ clienteSelecionado.telefone }}
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <button
+                    type="button"
+                    class="btn btn-sm btn-light"
+                    title="Alterar cliente"
+                    (click)="removerClienteSelecionado()">
+
+                    <i class="fa fa-times"></i>
+
+                </button>
+
+            </div>
+
+
+            <!-- Pesquisa de cliente -->
+            <div
+                class="cliente-pesquisa"
+                *ngIf="!clienteSelecionado">
+
+                <div class="cliente-pesquisa-input">
+
+                    <i class="fa fa-search"></i>
+
+
+                    <input
+                        type="text"
+                        class="form-control"
+                        [(ngModel)]="pesquisaCliente"
+                        (ngModelChange)="pesquisarClientes()"
+                        [disabled]="carregandoClientes"
+                        placeholder="Pesquisar por nome, empresa ou telefone...">
+
+                </div>
+
+
+                <!-- Carregando -->
+                <div
+                    class="cliente-lista-info"
+                    *ngIf="carregandoClientes">
+
+                    <i class="fa fa-spinner fa-spin"></i>
+
+                    Carregando clientes...
+
+                </div>
+
+
+                <!-- Lista de clientes -->
+                <div
+                    class="cliente-lista"
+                    *ngIf="
+                        !carregandoClientes &&
+                        clientesFiltrados.length > 0
+                    ">
+
+                    <button
+                        type="button"
+                        class="cliente-item"
+                        *ngFor="let cliente of clientesFiltrados"
+                        (click)="selecionarCliente(cliente)">
+
+                        <div class="cliente-item-avatar">
+
+                            <i class="fa fa-user"></i>
+
+                        </div>
+
+
+                        <div class="cliente-item-info">
+
+                            <div class="cliente-item-nome">
+
+                                {{ cliente.nome }}
+
+                            </div>
+
+
+                            <div
+                                class="cliente-item-detalhes"
+                                *ngIf="cliente.empresa">
+
+                                {{ cliente.empresa }}
+
+                            </div>
+
+
+                            <div
+                                class="cliente-item-detalhes"
+                                *ngIf="cliente.telefone">
+
+                                {{ cliente.telefone }}
+
+                            </div>
+
+                        </div>
+
+
+                        <i class="fa fa-chevron-right cliente-item-arrow"></i>
+
+                    </button>
+
+                </div>
+
+
+                <!-- Nenhum resultado -->
+                <div
+                    class="cliente-lista-info"
+                    *ngIf="
+                        !carregandoClientes &&
+                        clientesFiltrados.length === 0
+                    ">
+
+                    <i class="fa fa-search"></i>
+
+                    Nenhum cliente encontrado.
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="new-client-option">
+
+            <span>
+                O cliente não está cadastrado?
+            </span>
+
+
+            <button
+                type="button"
+                class="btn btn-link"
+                (click)="enviarParaClienteNaoCadastrado()">
+
+                <i class="fa fa-plus mr-1"></i>
+
+                Enviar para cliente não cadastrado
+
+            </button>
+
+        </div>
+
+
+        <div class="form-actions">
+
+            <button
+                type="button"
+                class="btn btn-light"
+                (click)="fechar()">
+
+                Cancelar
+
+            </button>
+
+
+            <button
+                type="button"
+                class="btn btn-primary"
+                [disabled]="
+                    !clienteId ||
+                    carregandoClientes ||
+                    carregando
+                "
+                (click)="abrirConversa()">
+
+                <i
+                    *ngIf="!carregando"
+                    class="fa fa-comments mr-1">
+                </i>
+
+                <i
+                    *ngIf="carregando"
+                    class="fa fa-spinner fa-spin mr-1">
+                </i>
+
+                {{ carregando ? 'Abrindo...' : 'Abrir conversa' }}
+
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <!-- Cliente não cadastrado -->
+    <div
+        class="nova-conversa-body"
+        *ngIf="clienteNaoCadastrado">
+
+
+        <div class="back-link">
+
+            <button
+                type="button"
+                class="btn btn-link p-0"
+                (click)="voltarSelecaoCliente()">
+
+                <i class="fa fa-arrow-left mr-1"></i>
+
+                Voltar
+
+            </button>
+
+        </div>
+
+
+        <div class="form-group">
+
+            <label>
+                Nome do cliente
+
+                <span class="text-danger">
+                    *
+                </span>
+
+            </label>
+
+
+            <input
+                type="text"
+                class="form-control"
+                [(ngModel)]="nomeCliente"
+                placeholder="Nome do cliente">
+
+        </div>
+
+
+        <div class="form-group">
+
+            <label>
+                Telefone
+
+                <span class="text-danger">
+                    *
+                </span>
+
+            </label>
+
+
+            <input
+                type="text"
+                class="form-control"
+                [(ngModel)]="telefone"
+                placeholder="(28) 99999-9999">
+
+        </div>
+
+
+        <div class="form-group">
+
+            <label>
+                Mensagem
+
+                <span class="text-danger">
+                    *
+                </span>
+
+            </label>
+
+
+            <textarea
+                class="form-control"
+                rows="5"
+                [(ngModel)]="mensagem"
+                placeholder="Mensagem inicial...">
+            </textarea>
+
+        </div>
+
+
+        <div class="alert alert-info">
+
+            <i class="fa fa-info-circle mr-2"></i>
+
+            Como este cliente ainda não possui uma conversa,
+            a primeira mensagem será enviada através de um
+            template aprovado do WhatsApp.
+
+        </div>
+
+
+        <div class="form-actions">
+
+            <button
+                type="button"
+                class="btn btn-light"
+                (click)="fechar()">
+
+                Cancelar
+
+            </button>
+
+
+            <button
+                type="button"
+                class="btn btn-primary"
+                [disabled]="
+                    !nomeCliente ||
+                    !telefone ||
+                    !mensagem ||
+                    carregando
+                "
+                (click)="enviar()">
+
+                <i
+                    *ngIf="!carregando"
+                    class="fa fa-paper-plane mr-1">
+                </i>
+
+                <i
+                    *ngIf="carregando"
+                    class="fa fa-spinner fa-spin mr-1">
+                </i>
+
+                {{ carregando ? 'Enviando...' : 'Iniciar conversa' }}
+
+            </button>
+
+        </div>
+
+    </div>
+
+</div>

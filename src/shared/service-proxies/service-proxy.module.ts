@@ -23,6 +23,12 @@ import * as ApiServiceProxies from './service-proxies';
         ApiServiceProxies.VendedoresServiceProxy,
         ApiServiceProxies.StatusNegociacoesServiceProxy,
         ApiServiceProxies.OportunidadesServiceProxy,
+        ApiServiceProxies.WhatsAppServiceProxy,
+        ApiServiceProxies.ConversasServiceProxy,
+        ApiServiceProxies.MensagensServiceProxy,
+        ApiServiceProxies.AnalisesIAServiceProxy,
+        ApiServiceProxies.PromocoesServiceProxy,
+        ApiServiceProxies.DashboardServiceProxy,
 
         { provide: HTTP_INTERCEPTORS, useClass: AbpHttpInterceptor, multi: true },
     ],

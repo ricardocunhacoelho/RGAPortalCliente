@@ -682,3 +682,37 @@
 .oportunidades-page.arrastando * {
     cursor: grabbing !important;
 }
+
+/* ==============================
+   OPORTUNIDADE DE PROMOÇÃO
+   ============================== */
+
+.opportunity-card.oportunidade-promocao {
+    border-color: #f5a000;
+    box-shadow: 0 0 0 1px rgba(245, 160, 0, .10);
+}
+
+.promocao-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+
+    width: fit-content;
+
+    margin-bottom: 9px;
+    padding: 4px 8px;
+
+    border-radius: 5px;
+
+    background: rgba(245, 160, 0, .12);
+    color: #b36f00;
+
+    font-size: 9px;
+    font-weight: 700;
+
+    text-transform: uppercase;
+}
+
+.promocao-badge i {
+    font-size: 9px;
+}

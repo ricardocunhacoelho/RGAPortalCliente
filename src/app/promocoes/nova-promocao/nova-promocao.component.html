@@ -1,0 +1,661 @@
+<div class="nova-promocao">
+
+    <!-- ========================================================
+         CABEÇALHO
+    ========================================================= -->
+
+    <div class="pagina-header">
+
+        <div>
+
+            <h1>
+                Nova promoção
+            </h1>
+
+            <p>
+                Crie uma promoção para enviar aos seus clientes pelo WhatsApp.
+            </p>
+
+        </div>
+
+
+        <button type="button" class="btn-voltar" (click)="cancelar()">
+
+            <i class="fa fa-arrow-left"></i>
+
+            Voltar
+
+        </button>
+
+    </div>
+
+
+    <!-- ========================================================
+         CONTEÚDO
+    ========================================================= -->
+
+    <div class="conteudo">
+
+
+        <!-- ====================================================
+             CONFIGURAÇÃO
+        ===================================================== -->
+
+        <div class="card">
+
+            <div class="card-header">
+
+                <div class="icone">
+
+                    <i class="fa fa-bullhorn"></i>
+
+                </div>
+
+                <div>
+
+                    <h2>
+                        Configuração da promoção
+                    </h2>
+
+                    <p>
+                        Defina os clientes, produto e mensagem da campanha.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <!-- ==================================================
+                 NOME DA PROMOÇÃO
+            =================================================== -->
+
+            <div class="campo">
+
+                <label>
+                    Nome da promoção
+                </label>
+
+                <input type="text" [(ngModel)]="nomePromocao" placeholder="Ex.: Promoção de setembro" />
+
+            </div>
+
+
+            <!-- ==================================================
+                 CLIENTES
+            =================================================== -->
+
+            <div class="campo">
+
+                <div class="clientes-label">
+
+                    <label>
+                        Clientes destinatários
+                    </label>
+
+                    <span class="clientes-contador" *ngIf="quantidadeClientesSelecionados > 0">
+
+                        {{ quantidadeClientesSelecionados }}
+                        selecionado(s)
+
+                    </span>
+
+                </div>
+
+
+                <div class="clientes-selecao">
+
+
+                    <!-- PESQUISA -->
+
+                    <div class="cliente-pesquisa-input">
+
+                        <i class="fa fa-search"></i>
+
+                        <input type="text" [(ngModel)]="pesquisaCliente" (ngModelChange)="pesquisarClientes()"
+                            [disabled]="carregandoClientes" placeholder="Pesquisar por nome, empresa ou telefone..." />
+
+                    </div>
+
+
+                    <!-- AÇÕES -->
+
+                    <div class="clientes-acoes" *ngIf="
+                            !carregandoClientes &&
+                            clientesFiltrados.length > 0
+                        ">
+
+                        <button type="button" class="btn-selecionar-todos" (click)="selecionarTodos()">
+
+                            <i class="fa" [class.fa-check-square-o]="
+                                    todosFiltradosSelecionados
+                                " [class.fa-square-o]="
+                                    !todosFiltradosSelecionados
+                                ">
+                            </i>
+
+                            {{
+                            todosFiltradosSelecionados
+                            ? 'Desmarcar todos'
+                            : 'Selecionar todos'
+                            }}
+
+                        </button>
+
+                    </div>
+
+
+                    <!-- CARREGANDO -->
+
+                    <div class="cliente-lista-info" *ngIf="carregandoClientes">
+
+                        <i class="fa fa-spinner fa-spin"></i>
+
+                        Carregando clientes...
+
+                    </div>
+
+
+                    <!-- LISTA -->
+
+                    <div class="cliente-lista" *ngIf="
+                            !carregandoClientes &&
+                            clientesFiltrados.length > 0
+                        ">
+
+                        <button type="button" class="cliente-item" *ngFor="
+                                let cliente of clientesFiltrados
+                            " [class.selecionado]="
+                                isClienteSelecionado(cliente)
+                            " [class.sem-telefone]="
+                                !cliente.telefone
+                            " [disabled]="
+                                !cliente.telefone
+                            " (click)="alternarCliente(cliente)">
+
+
+                            <!-- CHECK -->
+
+                            <div class="cliente-check">
+
+                                <i class="fa" [class.fa-check-square]="
+                                        isClienteSelecionado(cliente)
+                                    " [class.fa-square-o]="
+                                        !isClienteSelecionado(cliente)
+                                    ">
+                                </i>
+
+                            </div>
+
+
+                            <!-- AVATAR -->
+
+                            <div class="cliente-item-avatar">
+
+                                <i class="fa fa-user"></i>
+
+                            </div>
+
+
+                            <!-- DADOS -->
+
+                            <div class="cliente-item-info">
+
+                                <div class="cliente-item-nome">
+
+                                    {{
+                                    cliente.empresa ||
+                                    cliente.nome
+                                    }}
+
+                                </div>
+
+
+                                <div class="cliente-item-detalhes" *ngIf="
+                                        cliente.empresa &&
+                                        cliente.nome
+                                    ">
+
+                                    {{ cliente.nome }}
+
+                                </div>
+
+
+                                <div class="cliente-item-detalhes" *ngIf="cliente.telefone">
+
+                                    {{ cliente.telefone }}
+
+                                </div>
+
+
+                                <div class="cliente-sem-telefone" *ngIf="!cliente.telefone">
+
+                                    <i class="fa fa-exclamation-circle"></i>
+
+                                    Sem telefone cadastrado
+
+                                </div>
+
+                            </div>
+
+
+                            <!-- SETA -->
+
+                            <i class="fa fa-chevron-right cliente-item-arrow">
+                            </i>
+
+                        </button>
+
+                    </div>
+
+
+                    <!-- NENHUM CLIENTE -->
+
+                    <div class="cliente-lista-info" *ngIf="
+                            !carregandoClientes &&
+                            clientesFiltrados.length === 0
+                        ">
+
+                        <i class="fa fa-search"></i>
+
+                        Nenhum cliente encontrado.
+
+                    </div>
+
+                </div>
+
+
+                <!-- RESUMO -->
+
+                <div class="clientes-resumo" *ngIf="quantidadeClientesSelecionados > 0">
+
+                    <i class="fa fa-users"></i>
+
+                    <strong>
+                        {{ quantidadeClientesSelecionados }}
+                    </strong>
+
+                    cliente(s) receberão esta promoção.
+
+                </div>
+
+            </div>
+
+
+            <!-- ==================================================
+                 TEMPLATE
+            =================================================== -->
+
+            <div class="campo">
+
+                <label>
+                    Template do WhatsApp
+                </label>
+
+
+                <div *ngIf="carregandoTemplates" class="loading">
+
+                    <i class="fa fa-spinner fa-spin"></i>
+
+                    Carregando templates...
+
+                </div>
+
+
+                <div *ngIf="!carregandoTemplates" class="templates">
+
+                    <div *ngFor="
+                            let template of templates
+                        " class="template" [class.selecionado]="
+                            templateSelecionado?.nome ===
+                            template.nome
+                        " (click)="
+                            selecionarTemplate(template)
+                        ">
+
+
+                        <div class="radio">
+
+                            <div *ngIf="
+                                    templateSelecionado?.nome ===
+                                    template.nome
+                                ">
+                            </div>
+
+                        </div>
+
+
+                        <div class="template-info">
+
+                            <strong>
+                                {{ template.nome }}
+                            </strong>
+
+                            <span>
+                                {{ template.categoria }}
+                                ·
+                                {{ template.idioma }}
+                            </span>
+
+                        </div>
+
+
+                        <i *ngIf="
+                                template.nome ===
+                                'promocao_produto'
+                            " class="fa fa-tag template-promocao">
+                        </i>
+
+                    </div>
+
+
+                    <div *ngIf="!templates.length" class="sem-template">
+
+                        Nenhum template disponível.
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- ==================================================
+                 PARÂMETROS
+            =================================================== -->
+
+            <div class="campo parametros-campo" *ngIf="
+                    templateSelecionado &&
+                    obterQuantidadeParametros() > 0
+                ">
+
+                <div class="parametros-header">
+
+                    <div>
+
+                        <label>
+                            Informações da promoção
+                        </label>
+
+                        <span>
+                            Preencha os dados utilizados pelo template.
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <div class="parametros">
+
+                    <div class="parametro" *ngFor="
+                            let index of obterIndicesParametros()
+                        ">
+
+
+                        <label>
+
+                            {{ obterNomeParametro(index) }}
+
+                            <span class="obrigatorio" *ngIf="
+                                    !parametroAutomatico(index)
+                                ">
+                                *
+                            </span>
+
+                        </label>
+
+
+                        <!-- CAMPO AUTOMÁTICO -->
+
+                        <div class="parametro-automatico" *ngIf="
+                                parametroAutomatico(index)
+                            ">
+
+                            <i class="fa fa-user"></i>
+
+                            <span>
+
+                                {{
+                                nomeClientePreview
+                                }}
+
+                            </span>
+
+                            <small>
+                                Preenchido automaticamente
+                            </small>
+
+                        </div>
+
+
+                        <!-- CAMPO MANUAL -->
+
+                        <input *ngIf="
+                                !parametroAutomatico(index)
+                            " type="text" [ngModel]="
+                                getParametro(index)
+                            " (ngModelChange)="
+                                alterarParametro(
+                                    index,
+                                    $event
+                                )
+                            " [placeholder]="
+                                'Informe ' +
+                                obterNomeParametro(index).toLowerCase()
+                            " />
+
+                    </div>
+
+                </div>
+
+                <div class="campo">
+
+                    <label>
+                        Valor estimado do produto
+                    </label>
+
+                    <input type="number" [(ngModel)]="valorEstimadoProduto" placeholder="Ex.: 15000" min="0"
+                        step="0.01" />
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- ====================================================
+             PREVIEW
+        ===================================================== -->
+
+        <div class="card preview-card">
+
+            <div class="card-header">
+
+                <div class="icone">
+
+                    <i class="fa fa-eye"></i>
+
+                </div>
+
+                <div>
+
+                    <h2>
+                        Pré-visualização
+                    </h2>
+
+                    <p>
+                        Veja como a mensagem será enviada.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <!-- PREVIEW VAZIO -->
+
+            <div *ngIf="!templateSelecionado" class="preview-vazio">
+
+                <i class="fa fa-comment-o"></i>
+
+                <span>
+                    Selecione um template para visualizar a mensagem.
+                </span>
+
+            </div>
+
+
+            <!-- WHATSAPP -->
+
+            <div *ngIf="templateSelecionado" class="whatsapp">
+
+
+                <div class="whatsapp-header">
+
+                    <div class="whatsapp-avatar">
+                        R
+                    </div>
+
+                    <div>
+
+                        <strong>
+                            RGA Industrial
+                        </strong>
+
+                        <span>
+                            WhatsApp
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <div class="whatsapp-body">
+
+                    <div class="mensagem">
+
+
+                        <!-- CABEÇALHO -->
+
+                        <div *ngIf="
+                                templateSelecionado.cabecalho
+                            " class="mensagem-header">
+
+                            {{ templateSelecionado.cabecalho }}
+
+                        </div>
+
+
+                        <!-- CORPO -->
+
+                        <div class="mensagem-corpo">
+
+                            {{ mensagemPreview }}
+
+                        </div>
+
+
+                        <!-- HORA -->
+
+                        <div class="mensagem-hora">
+
+                            09:53
+
+                            <i class="fa fa-check"></i>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- ==================================================
+                 RESUMO DO ENVIO
+            =================================================== -->
+
+            <div class="preview-resumo">
+
+                <div class="preview-resumo-item">
+
+                    <i class="fa fa-users"></i>
+
+                    <div>
+
+                        <strong>
+                            {{ quantidadeClientesSelecionados }}
+                        </strong>
+
+                        <span>
+                            destinatários
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <div class="preview-resumo-item">
+
+                    <i class="fa fa-file-text-o"></i>
+
+                    <div>
+
+                        <strong>
+                            {{ templateSelecionado?.nome || '-' }}
+                        </strong>
+
+                        <span>
+                            template
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ========================================================
+         AÇÕES
+    ========================================================= -->
+
+    <div class="acoes">
+
+        <button type="button" class="btn-cancelar" [disabled]="salvando" (click)="cancelar()">
+
+            Cancelar
+
+        </button>
+
+
+        <button type="button" class="btn-criar" [disabled]="
+                salvando ||
+                !nomePromocao.trim() ||
+                !templateSelecionado ||
+                quantidadeClientesSelecionados === 0 ||
+                !parametrosValidos()
+            " (click)="criarPromocao()">
+
+            <i *ngIf="salvando" class="fa fa-spinner fa-spin">
+            </i>
+
+            <i *ngIf="!salvando" class="fa fa-bullhorn">
+            </i>
+
+            {{ salvando ? 'Criando...' : 'Criar promoção' }}
+
+        </button>
+
+    </div>
+
+</div>

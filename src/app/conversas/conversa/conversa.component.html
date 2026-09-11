@@ -1,0 +1,771 @@
+<!-- ============================================================ -->
+<!-- SELEÇÃO DE TEMPLATE -->
+<!-- ============================================================ -->
+
+<app-selecionar-template
+    *ngIf="exibindoTemplates"
+    [conversaId]="conversaId"
+    [conversa]="conversa"
+    (onClose)="fecharTemplates()"
+    (onEnviado)="templateEnviado()">
+</app-selecionar-template>
+
+
+<!-- ============================================================ -->
+<!-- CONVERSA -->
+<!-- ============================================================ -->
+
+<div
+    class="conversa"
+    *ngIf="!exibindoTemplates">
+
+
+    <!-- ======================================================== -->
+    <!-- CABEÇALHO -->
+    <!-- ======================================================== -->
+
+    <div class="conversa-header">
+
+        <!-- ==================================================== -->
+        <!-- CLIENTE -->
+        <!-- ==================================================== -->
+
+        <div class="cliente-info">
+
+            <div class="cliente-avatar">
+
+                <i class="fa fa-user"></i>
+
+            </div>
+
+
+            <div class="cliente-dados">
+
+                <div class="cliente-nome">
+
+                    {{ conversa?.clienteNome || 'Cliente' }}
+
+                </div>
+
+
+                <div class="cliente-telefone">
+
+                    {{ conversa?.telefone || 'WhatsApp' }}
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- ==================================================== -->
+        <!-- AÇÕES -->
+        <!-- ==================================================== -->
+
+        <div class="conversa-actions">
+
+            <button
+                type="button"
+                class="btn btn-sm btn-light"
+                title="Informações">
+
+                <i class="fa fa-info-circle"></i>
+
+            </button>
+
+
+            <button
+                type="button"
+                class="btn btn-sm btn-light ml-2"
+                title="Fechar conversa"
+                (click)="fechar()">
+
+                <i class="fa fa-times"></i>
+
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <!-- ======================================================== -->
+    <!-- CORPO -->
+    <!-- ======================================================== -->
+
+    <div class="conversa-corpo">
+
+
+        <!-- ==================================================== -->
+        <!-- ÁREA DE MENSAGENS -->
+        <!-- ==================================================== -->
+
+        <div
+            #mensagensContainer
+            class="mensagens-container"
+            (scroll)="aoRolarMensagens($event)">
+
+
+            <!-- ================================================= -->
+            <!-- CARREGANDO MENSAGENS ANTIGAS -->
+            <!-- ================================================= -->
+
+            <div
+                class="carregando-mais-mensagens"
+                *ngIf="carregandoMaisMensagens">
+
+                <i class="fa fa-spinner fa-spin"></i>
+
+                <span>
+                    Carregando mensagens anteriores...
+                </span>
+
+            </div>
+
+
+            <!-- ================================================= -->
+            <!-- LISTA DE MENSAGENS -->
+            <!-- ================================================= -->
+
+            <div
+                class="mensagem-item"
+                *ngFor="let item of mensagens"
+                [class.mensagem-enviada]="
+                    item.direcao === 'Enviada'
+                "
+                [class.mensagem-recebida]="
+                    item.direcao !== 'Enviada'
+                ">
+
+
+                <div class="mensagem-balao">
+
+
+                    <!-- ========================================= -->
+                    <!-- CONTEÚDO -->
+                    <!-- ========================================= -->
+
+                    <div class="mensagem-conteudo">
+
+                        {{ item.conteudo }}
+
+                    </div>
+
+
+                    <!-- ========================================= -->
+                    <!-- HORÁRIO -->
+                    <!-- ========================================= -->
+
+                    <div class="mensagem-hora">
+
+                        {{ formatarHora(item.dataHora) }}
+
+
+                        <i
+                            *ngIf="
+                                item.direcao === 'Enviada'
+                            "
+                            class="fa fa-check">
+                        </i>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- ================================================= -->
+            <!-- LOADING INICIAL -->
+            <!-- ================================================= -->
+
+            <div
+                class="empty-mensagens carregando-inicial"
+                *ngIf="
+                    carregandoMensagens &&
+                    mensagens.length === 0
+                ">
+
+
+                <div class="empty-message-icon">
+
+                    <i class="fa fa-spinner fa-spin"></i>
+
+                </div>
+
+
+                <p>
+                    Carregando mensagens...
+                </p>
+
+            </div>
+
+
+            <!-- ================================================= -->
+            <!-- NENHUMA MENSAGEM -->
+            <!-- ================================================= -->
+
+            <div
+                class="empty-mensagens"
+                *ngIf="
+                    !carregandoMensagens &&
+                    mensagens.length === 0
+                ">
+
+
+                <div class="empty-message-icon">
+
+                    <i class="fa fa-comments"></i>
+
+                </div>
+
+
+                <p>
+                    Nenhuma mensagem carregada.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <!-- ==================================================== -->
+        <!-- PAINEL DE ANÁLISE DA IA -->
+        <!-- ==================================================== -->
+
+        <aside class="analise-ia-panel">
+
+
+            <!-- ================================================= -->
+            <!-- CABEÇALHO DA IA -->
+            <!-- ================================================= -->
+
+            <div class="analise-ia-header">
+
+                <div class="analise-ia-titulo">
+
+
+                    <div class="analise-ia-icon">
+
+                        <i class="fa fa-magic"></i>
+
+                    </div>
+
+
+                    <div class="analise-ia-titulo-texto">
+
+                        <strong>
+                            Análise da IA
+                        </strong>
+
+                        <span>
+                            Análise comercial da conversa
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- ================================================= -->
+            <!-- CARREGANDO -->
+            <!-- ================================================= -->
+
+            <div
+                class="analise-ia-loading"
+                *ngIf="carregandoAnaliseIA">
+
+
+                <div class="analise-loading-icon">
+
+                    <i class="fa fa-spinner fa-spin"></i>
+
+                </div>
+
+
+                <strong>
+                    Analisando conversa...
+                </strong>
+
+
+                <span>
+                    A IA está analisando o histórico do cliente.
+                </span>
+
+            </div>
+
+
+            <!-- ================================================= -->
+            <!-- ERRO -->
+            <!-- ================================================= -->
+
+            <div
+                class="analise-ia-erro"
+                *ngIf="
+                    erroAnaliseIA &&
+                    !carregandoAnaliseIA
+                ">
+
+
+                <div class="analise-erro-icon">
+
+                    <i class="fa fa-exclamation-triangle"></i>
+
+                </div>
+
+
+                <strong>
+                    Não foi possível analisar a conversa.
+                </strong>
+
+
+                <span>
+                    Ocorreu um problema ao consultar a IA.
+                </span>
+
+
+                <button
+                    type="button"
+                    class="btn btn-sm btn-light"
+                    (click)="
+                        analisarConversaIA(
+                            conversaId || '',
+                            numeroCarregamentoConversa
+                        )
+                    ">
+
+                    <i class="fa fa-refresh mr-1"></i>
+
+                    Tentar novamente
+
+                </button>
+
+            </div>
+
+
+            <!-- ================================================= -->
+            <!-- RESULTADO DA ANÁLISE -->
+            <!-- ================================================= -->
+
+            <div
+                class="analise-ia-conteudo"
+                *ngIf="
+                    analiseIA &&
+                    !carregandoAnaliseIA
+                ">
+
+
+                <!-- ============================================= -->
+                <!-- STATUS -->
+                <!-- ============================================= -->
+
+                <div class="analise-bloco">
+
+                    <div class="analise-label">
+
+                        <i class="fa fa-flag"></i>
+
+                        Status da negociação
+
+                    </div>
+
+
+                    <div class="analise-status">
+
+                        {{ analiseIA.status }}
+
+                    </div>
+
+                </div>
+
+
+                <!-- ============================================= -->
+                <!-- PROBABILIDADE -->
+                <!-- ============================================= -->
+
+                <div class="analise-bloco">
+
+                    <div class="analise-label">
+
+                        <i class="fa fa-chart-line"></i>
+
+                        Probabilidade estimada
+
+                    </div>
+
+
+                    <div class="probabilidade">
+
+
+                        <div class="probabilidade-topo">
+
+                            <span>
+                                Probabilidade de fechamento
+                            </span>
+
+                            <strong>
+                                {{ analiseIA.probabilidade }}%
+                            </strong>
+
+                        </div>
+
+
+                        <div class="probabilidade-barra">
+
+                            <div
+                                class="probabilidade-progresso"
+                                [style.width.%]="
+                                    analiseIA.probabilidade
+                                ">
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- ============================================= -->
+                <!-- OPORTUNIDADE -->
+                <!-- ============================================= -->
+
+                <div class="analise-bloco">
+
+                    <div class="analise-label">
+
+                        <i class="fa fa-bullseye"></i>
+
+                        Oportunidade
+
+                    </div>
+
+
+                    <div
+                        class="oportunidade-status"
+                        [class.ativa]="
+                            analiseIA.oportunidade
+                        "
+                        [class.inativa]="
+                            !analiseIA.oportunidade
+                        ">
+
+
+                        <i
+                            class="fa"
+                            [class.fa-check-circle]="
+                                analiseIA.oportunidade
+                            "
+                            [class.fa-minus-circle]="
+                                !analiseIA.oportunidade
+                            ">
+                        </i>
+
+
+                        <span>
+
+                            {{
+                                analiseIA.oportunidade
+                                    ? 'Oportunidade identificada'
+                                    : 'Nenhuma oportunidade clara'
+                            }}
+
+                        </span>
+
+                    </div>
+
+
+                    <p
+                        *ngIf="
+                            analiseIA.oportunidadeDescricao
+                        ">
+
+                        {{ analiseIA.oportunidadeDescricao }}
+
+                    </p>
+
+                </div>
+
+
+                <!-- ============================================= -->
+                <!-- O QUE ACONTECEU -->
+                <!-- ============================================= -->
+
+                <div class="analise-bloco">
+
+                    <div class="analise-label">
+
+                        <i class="fa fa-history"></i>
+
+                        O que aconteceu
+
+                    </div>
+
+
+                    <p>
+
+                        {{ analiseIA.oQueAconteceu }}
+
+                    </p>
+
+                </div>
+
+
+                <!-- ============================================= -->
+                <!-- PRÓXIMA AÇÃO -->
+                <!-- ============================================= -->
+
+                <div class="analise-bloco analise-destaque">
+
+                    <div class="analise-label">
+
+                        <i class="fa fa-arrow-right"></i>
+
+                        Sugestão de próxima ação
+
+                    </div>
+
+
+                    <p>
+
+                        {{ analiseIA.proximaAcao }}
+
+                    </p>
+
+                </div>
+
+
+                <!-- ============================================= -->
+                <!-- SUGESTÃO DE RESPOSTA -->
+                <!-- ============================================= -->
+
+                <div class="analise-bloco">
+
+                    <div class="analise-label">
+
+                        <i class="fa fa-comment"></i>
+
+                        Sugestão de resposta
+
+                    </div>
+
+
+                    <div class="sugestao-resposta">
+
+                        {{ analiseIA.sugestaoResposta }}
+
+                    </div>
+
+                </div>
+
+
+                <!-- ============================================= -->
+                <!-- INSIGHTS -->
+                <!-- ============================================= -->
+
+                <div
+                    class="analise-bloco"
+                    *ngIf="
+                        analiseIA.insights &&
+                        analiseIA.insights.length > 0
+                    ">
+
+
+                    <div class="analise-label">
+
+                        <i class="fa fa-lightbulb"></i>
+
+                        Insights da IA
+
+                    </div>
+
+
+                    <ul class="insights-list">
+
+
+                        <li
+                            *ngFor="
+                                let insight of analiseIA.insights
+                            ">
+
+                            <i class="fa fa-check"></i>
+
+                            <span>
+                                {{ insight }}
+                            </span>
+
+                        </li>
+
+
+                    </ul>
+
+                </div>
+
+            </div>
+
+        </aside>
+
+    </div>
+
+
+    <!-- ======================================================== -->
+    <!-- ÁREA DE ENVIO -->
+    <!-- ======================================================== -->
+
+    <div class="envio-container">
+
+
+        <!-- ==================================================== -->
+        <!-- STATUS DA JANELA -->
+        <!-- ==================================================== -->
+
+        <div
+            class="janela-mensagem"
+            *ngIf="conversa">
+
+
+            <!-- ================================================= -->
+            <!-- JANELA ABERTA -->
+            <!-- ================================================= -->
+
+            <div
+                class="janela-aberta"
+                *ngIf="!janelaExpirada">
+
+
+                <i class="fa fa-check-circle"></i>
+
+
+                <span>
+                    {{ textoJanela }}
+                </span>
+
+            </div>
+
+
+            <!-- ================================================= -->
+            <!-- JANELA EXPIRADA -->
+            <!-- ================================================= -->
+
+            <div
+                class="janela-expirada"
+                *ngIf="janelaExpirada">
+
+
+                <i class="fa fa-clock"></i>
+
+
+                <div>
+
+                    <strong>
+                        Janela de atendimento encerrada
+                    </strong>
+
+
+                    <span>
+                        Para iniciar uma nova conversa, envie um template aprovado pelo WhatsApp.
+                    </span>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- ==================================================== -->
+        <!-- CAIXA DE ENVIO -->
+        <!-- ==================================================== -->
+
+        <div class="envio-box">
+
+
+            <textarea
+                class="form-control"
+                [(ngModel)]="mensagem"
+                rows="2"
+                [disabled]="
+                    janelaExpirada ||
+                    enviando
+                "
+                [placeholder]="
+                    janelaExpirada
+                        ? 'A janela de 24h foi encerrada. Use um template.'
+                        : 'Digite uma mensagem...'
+                ">
+            </textarea>
+
+
+            <div class="envio-actions">
+
+
+                <!-- ============================================= -->
+                <!-- TEMPLATE -->
+                <!-- ============================================= -->
+
+                <button
+                    type="button"
+                    class="btn"
+                    [class.btn-light]="
+                        !janelaExpirada
+                    "
+                    [class.btn-warning]="
+                        janelaExpirada
+                    "
+                    [disabled]="enviando"
+                    (click)="abrirTemplates()">
+
+
+                    <i class="fa fa-file-alt mr-1"></i>
+
+                    Template
+
+                </button>
+
+
+                <!-- ============================================= -->
+                <!-- ENVIAR -->
+                <!-- ============================================= -->
+
+                <button
+                    type="button"
+                    class="btn btn-primary"
+                    [disabled]="
+                        !mensagem.trim() ||
+                        carregando ||
+                        enviando ||
+                        janelaExpirada
+                    "
+                    (click)="enviarMensagem()">
+
+
+                    <i
+                        *ngIf="!enviando"
+                        class="fa fa-paper-plane">
+                    </i>
+
+
+                    <i
+                        *ngIf="enviando"
+                        class="fa fa-spinner fa-spin">
+                    </i>
+
+
+                    {{
+                        enviando
+                            ? 'Enviando...'
+                            : 'Enviar'
+                    }}
+
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>

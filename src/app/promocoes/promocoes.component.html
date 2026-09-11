@@ -1,0 +1,210 @@
+<div class="promocoes-page">
+
+    <div class="page-header">
+
+        <div>
+            <h1>Promoções</h1>
+
+            <p>
+                Acompanhe o resultado das suas campanhas comerciais.
+            </p>
+        </div>
+
+        <button type="button" class="btn-nova-promocao" (click)="novaPromocao()">
+
+            <i class="fa fa-plus"></i>
+
+            Nova promoção
+
+        </button>
+
+    </div>
+
+
+    <div *ngIf="carregando" class="loading-container">
+
+        <i class="fa fa-spinner fa-spin"></i>
+
+        Carregando promoções...
+
+    </div>
+
+
+    <div *ngIf="!carregando && !promocoes.length" class="empty-state">
+
+        <div class="empty-icon">
+            <i class="fa fa-bullhorn"></i>
+        </div>
+
+        <h3>Nenhuma promoção criada</h3>
+
+        <p>
+            Crie sua primeira promoção e acompanhe
+            as oportunidades geradas.
+        </p>
+
+        <button type="button" class="btn-nova-promocao" (click)="novaPromocao()">
+
+            <i class="fa fa-plus"></i>
+
+            Criar primeira promoção
+
+        </button>
+
+    </div>
+
+
+    <div *ngIf="!carregando && promocoes.length" class="promocoes-grid">
+
+        <div *ngFor="let promocao of promocoes" class="promocao-card" (click)="abrirPromocao(promocao)">
+
+            <div class="card-header">
+
+                <div class="promocao-icon">
+                    <i class="fa fa-bullhorn"></i>
+                </div>
+
+                <div class="promocao-info">
+
+                    <h3>
+                        {{ promocao.nome }}
+                    </h3>
+
+                    <span>
+                        {{ promocao.templateId }}
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <div class="card-stats">
+
+                <div class="stat">
+
+                    <strong>
+                        {{ promocao.quantidadeDestinatarios }}
+                    </strong>
+
+                    <span>
+                        Destinatários
+                    </span>
+
+                </div>
+
+
+                <div class="stat">
+
+                    <strong>
+                        {{ promocao.quantidadeOportunidades }}
+                    </strong>
+
+                    <span>
+                        Oportunidades
+                    </span>
+
+                </div>
+
+
+                <div class="stat destaque">
+
+                    <strong>
+                        {{ promocao.quantidadeFechadas }}
+                    </strong>
+
+                    <span>
+                        Fechadas
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <div class="funil">
+
+                <div class="funil-item">
+
+                    <span>
+                        Prospecção
+                    </span>
+
+                    <strong>
+                        {{ promocao.quantidadeProspecao }}
+                    </strong>
+
+                </div>
+
+                <div class="funil-item">
+
+                    <span>
+                        Qualificação
+                    </span>
+
+                    <strong>
+                        {{ promocao.quantidadeQualificacao }}
+                    </strong>
+
+                </div>
+
+                <div class="funil-item">
+
+                    <span>
+                        Proposta
+                    </span>
+
+                    <strong>
+                        {{ promocao.quantidadeProposta }}
+                    </strong>
+
+                </div>
+
+                <div class="funil-item">
+
+                    <span>
+                        Negociação
+                    </span>
+
+                    <strong>
+                        {{ promocao.quantidadeNegociacao }}
+                    </strong>
+
+                </div>
+
+                <div class="funil-item perdido">
+
+                    <span>
+                        Perdidas
+                    </span>
+
+                    <strong>
+                        {{ promocao.quantidadePerdidas }}
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+            <div class="card-footer">
+
+                <span>
+                    
+                    Criada em
+                    {{ formatarData(promocao.dataEnvio) }}
+
+                </span>
+
+                <span class="ver-detalhes">
+                    Ver detalhes
+                    <i class="fa fa-arrow-right"></i>
+                </span>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
