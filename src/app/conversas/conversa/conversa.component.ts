@@ -819,9 +819,6 @@ export class ConversaComponent
 
                     this.enviando = false;
 
-                    this.carregarMensagens(true);
-
-
                     this.cd.detectChanges();
                 },
 
