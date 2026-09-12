@@ -35,6 +35,7 @@ import {
 
 import { SelecionarTemplateComponent }
     from '../selecionar-template/selecionar-template.component';
+import moment from 'moment';
 
 
 @Component({
@@ -251,6 +252,26 @@ export class ConversaComponent
         this.mensagens.push(
             mensagem
         );
+
+        if (evento.direcao === 'Recebida') {
+
+            this.marcarMensagensComoLidas(
+                evento.conversaId,
+                this.numeroCarregamentoConversa
+            );
+
+            if (this.conversa) {
+                this.conversa.dentroJanela24h = true;
+                this.conversa.ultimaMensagemCliente =
+                    moment(evento.dataHora);
+                this.conversa.limiteJanela24h =
+                    moment(evento.dataHora).add(24, 'hours');
+
+                this.atualizarStatusJanela();
+            }
+
+            this.cd.detectChanges();
+        }
 
 
         this.cd.detectChanges();
