@@ -193,6 +193,14 @@ export class ConversaComponent
         }
     }
 
+    ngOnInit(): void {
+
+        this.marcarMensagensComoLidas(
+            this.conversaId,
+            this.numeroCarregamentoConversa
+        );
+    }
+
     private receberMensagemEmTempoReal(
         evento: any
     ): void {
