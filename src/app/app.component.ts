@@ -15,6 +15,7 @@ import { WhatsAppSignalRService }
     imports: [HeaderComponent, SidebarComponent, RouterOutlet, FooterComponent],
 })
 export class AppComponent extends AppComponentBase implements OnInit {
+    
     sidebarExpanded: boolean;
 
     constructor(
